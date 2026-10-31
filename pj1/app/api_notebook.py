@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
 from . import db, notebook, notebook_write, places
+from . import character as C
 
 router = APIRouter()
 
@@ -28,6 +29,7 @@ def _view() -> dict[str, Any]:
     by = places.by_id()
     return {
         "chapters": notebook.chapters(),
+        "unit": C.unit(),
         "entries": [_view_entry(e) for e in notebook.list_entries(status=None)],
         "sources": notebook.SOURCES, "trusts": notebook.TRUSTS, "accuracy": notebook.ACCURACY,
         "places": [{"id": p["id"], "label": places.label(p["id"]) or p["name"]} for p in by.values() if p["kind"] not in ("world", "home")],

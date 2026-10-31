@@ -1,4 +1,4 @@
-/* 她的小本子：她自己认知中的世界（去过的地方、常去的店、吃过的东西、价格印象、听来的事、神秘学、你告诉她的）。
+/* 她的小本子：她自己认知中的世界（去过的地方、常去的店、吃过的东西、价格印象、听来的事、你告诉她的）。
  * 数据来自 /api/notebook（app/notebook.py）。你可以新建、改、删、锁定；你改过的条目自动锁定，改过的片段换颜色显示。
  * 她不会觉得你看她的小本子有什么奇怪的（和账本一样）。顶上的图标和房间书桌上的笔记本都能打开这里。
  */
@@ -41,7 +41,7 @@
   };
   const timeText = (t) => { const d = new Date(t * 1000); return `${dayText(t)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
   const chapterName = (k) => ((S.data && S.data.chapters.find((c) => c.key === k)) || {}).name || "（已删的章节）";
-  const money = (v) => `${Number(v).toFixed(1).replace(/\.0$/, "")} 钱`;
+  const money = (v) => `${Number(v).toFixed(1).replace(/\.0$/, "")} ${(S.data && S.data.unit) || "块"}`;
 
   let stateTimer = null;
   function setState(text, bad) {
@@ -269,7 +269,7 @@
         n.addEventListener("input", () => { it.name = n.value; });
         const p = el("input", "input"); p.type = "number"; p.min = 0; p.step = 0.1; p.value = it.price ?? "";
         p.addEventListener("input", () => { it.price = Number(p.value); });
-        row.append(n, p, el("span", null, "钱"), btn("linkish", "删", null, () => { items.splice(i, 1); drawItems(); }));
+        row.append(n, p, el("span", null, (S.data && S.data.unit) || "块"), btn("linkish", "删", null, () => { items.splice(i, 1); drawItems(); }));
         itemBox.appendChild(row);
       });
       itemBox.appendChild(btn("linkish", "＋ 加一样东西", null, () => { items.push({ name: "", price: 0, times: 1 }); drawItems(); }));

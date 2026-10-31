@@ -612,7 +612,7 @@
     wrap.appendChild(el("h3", "setgrp__sub", "小本子的章节"));
     wrap.appendChild(el("div", "sitem__hint",
       "她的小本子（顶上的笔记本图标 / 房间书桌上的笔记本）分哪几章。「准确度」决定她写这一章时能不能有误解：尽量准确的章节写入时会用上面的世界设定和地点库校对，"
-      + "神秘学允许误解（新人该有的样子），听说的事允许夸张。「店铺」不能删（价格前后一致靠它）；章节里还有条目时也删不掉。"));
+      + "听说的事允许夸张。「店铺」不能删（价格前后一致靠它）；章节里还有条目时也删不掉。"));
     if (!nbk.rows.length) { wrap.appendChild(el("div", "sitem__hint", "读取失败，刷新一下。")); box.appendChild(wrap); return; }
     const tbl = el("table", "stt__tbl");
     const head = el("tr");
@@ -920,12 +920,6 @@
         rec.appendChild(line);
       });
       box.appendChild(rec);
-    }
-    if (d.occult.count) {
-      const oc = el("div", "evp");
-      oc.appendChild(el("div", "evp__title", `她的神秘学经验：${d.occult.count} 次`));
-      oc.appendChild(el("div", "evp__line", d.occult.insights.length ? "小心得：" + d.occult.insights.join("；") : "还没有小心得"));
-      box.appendChild(oc);
     }
   }
 

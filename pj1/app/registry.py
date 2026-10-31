@@ -269,8 +269,8 @@ _add(
     _prob("meal_p_treat", "money", "和朋友出去吃：她请客的概率", "她付两份。", 0.10),
     Item("price_bands", "money", f"价格带（{C.unit()}，一个人一份）",
          f"按大类给出价格范围（在「连锁 / 普通店 · {C.price_places()[0][1] if C.price_places() else '家附近'} · 没噱头」时）。她买东西 / 吃饭时自己定价格，超出「最低~最高 × 下面的系数」就重新想一次，还不行就夹回范围内；"
-         "「常见」区间是告诉她一般花多少。" + C.pick("occult", f"神秘学用品很贵：800 {C.unit()}起，上不封顶（想要更夸张就把最高价调高），她买完至少还会剩下「紧」线那么多钱。"), "table", _pr.BAND_DEFAULTS, columns=_pr.BAND_COLUMNS, row_labels=_pr.BAND_ROWS, section="价格带和修正系数"),
-    Item("price_mod_tier", "money", "店铺档次的系数", "高档只在日料、西餐、自助、衣服、外套、鞋、化妆护肤里出现。游戏、游戏内购、神秘学用品不受这三张表影响。", "table",
+         "「常见」区间是告诉她一般花多少。", "table", _pr.BAND_DEFAULTS, columns=_pr.BAND_COLUMNS, row_labels=_pr.BAND_ROWS, section="价格带和修正系数"),
+    Item("price_mod_tier", "money", "店铺档次的系数", "高档只在日料、西餐、自助、衣服、外套、鞋、化妆护肤里出现。游戏、游戏内购不受这三张表影响。", "table",
          [{"k": t[2]} for t in _pr.TIERS], columns=_pr.MOD_COLUMNS, row_labels=[f"{t[1]}（{t[3]}）" for t in _pr.TIERS]),
     Item("price_mod_gimmick", "money", "噱头的系数", "她分享贵的东西时，会自然地提一句为什么贵（联名款、商场里的、被坑了）。", "table",
          [{"k": t[2]} for t in _pr.GIMMICKS], columns=_pr.MOD_COLUMNS, row_labels=[t[1] + (f"（{t[3]}）" if t[3] else "") for t in _pr.GIMMICKS]),
@@ -279,11 +279,10 @@ _add(
     _prob("price_repeat_same", "money", "同一家店同一样东西，价格和上次完全一样的概率", "其余在上次价格的 ±10% 里浮动（尾数照样偏 .9）。", 0.6),
 )
 for _k, _n, _lo, _hi, _w, _room in _md.CATS:
-    _occ = _k in _md.RESERVE_CATS
     _add(
         Item(f"price_min_{_k}", "money", f"（旧）「{_n}」最低价", "v13 起改用「价格带」。", "float", _lo, 0.1, 100000.0, 0.1, "钱", hidden=True),
         Item(f"price_max_{_k}", "money", f"（旧）「{_n}」最高价", "v13 起改用「价格带」。", "float", _hi, 0.1, 100000.0, 0.1, "钱", hidden=True),
-        Item(f"spend_w_{_k}", "money", f"「{_n}」的权重", "越大越常买，0 = 不会随机买这类。神秘学用品很贵，默认大约一个月买一次。" if _occ else "越大越常买，0 = 不会随机买这类。", "float", _w, 0.0, 100.0, 0.5),
+        Item(f"spend_w_{_k}", "money", f"「{_n}」的权重", "越大越常买，0 = 不会随机买这类。", "float", _w, 0.0, 100.0, 0.5),
         Item(f"spend_room_{_k}", "money", f"「{_n}」放进房间", "买了会留下来的东西（衣服、游戏、饰品……）自动加进她的房间。", "bool", _room),
     )
 for _k, _n, _lo, _hi in _md.MEAL_CATS:
@@ -323,8 +322,6 @@ _add(
     Item("sick_drop_c", "events", "24 小时内降多少度算骤降", "", "float", 6.0, 1.0, 30.0, 0.5, "℃"),
     Item("sick_days_min", "events", "生病最少几天", "", "int", 2, 1, 14, 1, "天"),
     Item("sick_days_max", "events", "生病最多几天", "", "int", 3, 1, 14, 1, "天"),
-    Item("occult_insight_every", "events", "每几次神秘学经历有一条小心得", "攒够这么多次，她会有一条自己摸索出来的小心得。0 = 不写。", "int", 3, 0, 20, 1, "次", section="神秘学"),
-    Item("occult_ask_prob", "events", "分享神秘学的事时，改成来请教你的概率", "在她眼里你是神秘学家，她可能会就这件事来问你。", "float", 0.3, 0.0, 1.0, 0.05, "0~1"),
 )
 
 # ───────────────────────── 心情同步（你分享心情 → 她可能被感染） ─────────────────────────
@@ -445,7 +442,7 @@ _add(
 # 选状态时参考心情和精力：权重 × e^(精力系数 × (精力 − 0.5) × 2 + 情绪系数 × 情绪)；做完一件事精力加减多少
 STATE_MOOD_DEFAULTS: dict[str, tuple[float, float, float]] = {     # 键：(精力系数, 情绪系数, 做完后精力变化)
     "tea": (-0.4, 0.0, 0.06), "read": (0.3, 0.2, -0.03), "daze": (-0.8, -0.3, 0.04), "video": (-0.6, -0.2, -0.02),
-    "game": (0.2, 0.1, -0.04), "create": (0.8, 0.5, -0.08), "occult": (0.5, 0.2, -0.08), "sfx": (0.4, 0.0, -0.08),
+    "game": (0.2, 0.1, -0.04), "create": (0.8, 0.5, -0.08), "sfx": (0.4, 0.0, -0.08),
     "cook": (0.0, 0.0, -0.06), "eat": (0.0, 0.0, 0.08), "eat_alone": (0.0, 0.0, 0.08), "dine_out": (0.0, 0.0, -0.06), "homework": (0.6, 0.0, -0.1),
     "shower": (0.0, 0.0, 0.05), "nap": (-1.2, 0.0, 0.3), "music": (-0.2, -0.4, 0.04), "anime": (-0.5, -0.3, -0.02),
     "draw": (0.4, 0.4, -0.05), "tidy": (0.5, 0.1, -0.06), "walk": (0.6, 0.2, -0.1), "shop": (0.6, 0.4, -0.15),

@@ -38,8 +38,6 @@ DEFS: list[StateDef] = [
     StateDef("game", "打游戏", 12, (10, 30), spends=True),
     StateDef("create", "试图创作", 14, (15, 40)),
     # —— 新增 ——
-    StateDef("occult", "练习神秘学", 8, (15, 40), hours=(9, 22),
-             blurbs=["对着一本小册子比划手势", "在纸上画一个圈，又擦掉", "试着静下来感应点什么", "摆了一排小石子，不知道在等什么", "照着书上念了一段，念到一半笑场了"]),
     StateDef("sfx", "帮妈妈录音效", 5, (20, 50), hours=(9, 20),
              blurbs=["被抓去拿着话筒走来走去", "在录门轴的吱呀声", "对着一盆水哗啦哗啦", "举着挂麦克风的杆子，手酸了", "给妈妈当拟音的帮手"]),
     StateDef("cook", "做饭", 0, (40, 60), random=False, blurbs=["在厨房忙活", "切菜切到一半", "锅里在咕嘟咕嘟响"]),
@@ -127,8 +125,6 @@ def _extra_states() -> None:
 
 
 _extra_states()
-if not C.feature("occult"):                    # 角色没开神秘学：不会随机去练
-    DEFS[:] = [StateDef(**{**d.__dict__, "random": False}) if d.key == "occult" else d for d in DEFS]
 BY_KEY = {d.key: d for d in DEFS}
 
 # 在外面时的这几个状态：回复更慢、更短

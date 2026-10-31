@@ -1,5 +1,5 @@
 /* 零花钱账本：本月余额、本月收入 / 支出、分类汇总、完整的明细（包括她没跟你说过的）。
- * 数据来自 /api/money。金额的单位是「钱」，后端存「币」（1 钱 = 10 币），这里显示一位小数。
+ * 数据来自 /api/money。金额的单位来自后端（d.unit，默认「块」），这里显示一位小数。
  * 她不会觉得你知道这些有什么奇怪：聊天时你提起，她正常接话。
  */
 (() => {
@@ -53,12 +53,12 @@
     const bal = el("section", "mp-card mp-balance");
     bal.appendChild(el("div", "mp-card__label", "现在的余额"));
     const num = el("div", "mp-balance__num", fmt(d.balance));
-    num.appendChild(el("small", null, " 钱"));
+    num.appendChild(el("small", null, " " + (d.unit || "块")));
     bal.appendChild(num);
     const row = el("div", "mp-balance__row");
     row.appendChild(el("span", `mp-tier mp-tier--${d.tier}`, d.tier_label));
     const ng = d.next_grant;
-    row.appendChild(el("span", "mp-balance__sub", `${dayText(ng)}发 ${d.monthly.toFixed(1)} 钱`));
+    row.appendChild(el("span", "mp-balance__sub", `${dayText(ng)}发 ${d.monthly.toFixed(1)} ${d.unit || "块"}`));
     bal.appendChild(row);
     side.appendChild(bal);
 
@@ -197,7 +197,7 @@
     note.type = "text";
     note.maxLength = 40;
     note.placeholder = "备注，可以留空，比如：过年的红包";
-    form.append(el("label", null, "金额（钱）"), amount, el("label", null, "备注"), note);
+    form.append(el("label", null, `金额（${(S.data && S.data.unit) || "块"}）`), amount, el("label", null, "备注"), note);
     box.appendChild(form);
     box.appendChild(el("p", "rm-hint", "正数 = 额外给她零花钱，负数 = 扣掉一笔。会记进账本，余额马上变化。"));
     const ops = el("div", "rm-form__ops");

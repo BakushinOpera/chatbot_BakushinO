@@ -281,7 +281,7 @@ CREATE TABLE IF NOT EXISTS room_books (
     look        TEXT    NOT NULL DEFAULT '{}',            -- 外观参数（JSON，见 app/booklook.py）：封面和书脊都由它生成
     place       TEXT    NOT NULL DEFAULT 'shelf',         -- shelf 书架（放满的堆在地上）| storage 收纳篮（不展示，但一直保存）
     source      TEXT    NOT NULL DEFAULT 'phal',          -- phal 她自己买的 | user 我手动加的
-    price       INTEGER NOT NULL DEFAULT 0,               -- 买的时候花了多少币
+    price       INTEGER NOT NULL DEFAULT 0,               -- 买的时候花了多少（账本的小单位）
     note        TEXT    NOT NULL DEFAULT '',
     got_on      TEXT    NOT NULL,
     created_at  TEXT    NOT NULL
@@ -400,7 +400,7 @@ def _migrate(conn: sqlite3.Connection) -> None:
     if "shared" not in evcols:
         conn.execute("ALTER TABLE life_events ADD COLUMN shared INTEGER NOT NULL DEFAULT 1")     # 0 = 她没主动告诉我的事（不进日总结）
     if "etype" not in evcols:
-        conn.execute("ALTER TABLE life_events ADD COLUMN etype TEXT")                            # 生活事件的类型（神秘学 / 和妈妈 / …）
+        conn.execute("ALTER TABLE life_events ADD COLUMN etype TEXT")                            # 生活事件的类型（和妈妈 / 和朋友 / …）
     if "people" not in evcols:
         conn.execute("ALTER TABLE life_events ADD COLUMN people TEXT")                           # JSON：涉及的人物名字
     if "tone" not in evcols:

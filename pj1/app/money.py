@@ -1,6 +1,6 @@
 """零花钱：每月发、账本、消费流程。
 
-* 单位：1 钱 = 10 币，账本存整数的「币」，显示成「xx.x 钱」。每月 1 号发 1500 钱（额度、日子都可配）；
+* 单位：账本存整数的小单位（1 块 = 10 小单位），显示成「xx.x 块」（单位见角色配置）。每月 1 号发 1500 块（额度、日子都可配）；
   月底结余默认滚入下个月；页面没开着漏掉的月份，下次打开时补发。
 * 余额紧会影响她的选择：少点外卖（`meal_factor()` 给饭点调度用）、少买东西，聊天里她嘴上可能抱怨。
 * 消费由代码按概率触发（`roll`，结合状态、心情、余额、季节、天气：只定类别、大概想花多少、最多花得起多少），
@@ -28,18 +28,18 @@ from .money_defs import CATS, LABEL, LOCAL, NO_SPEND_STATES, ONLY_IN, RELEVANT, 
 
 log = logging.getLogger(__name__)
 
-UNIT = C.sub_per_unit()          # 1 大单位 = 多少小单位（钱 → 币），见角色配置
+UNIT = C.sub_per_unit()          # 1 大单位 = 多少小单位（块 → 小单位），见角色配置
 CAT_KEYS = [c[0] for c in CATS]
 TIER_LABEL = {"ok": "宽裕", "low": "有点紧", "tight": "很紧"}
 
 
 def bi(qian: float) -> int:
-    """钱 → 币（整数）。"""
+    """大单位 → 小单位（整数）。"""
     return int(round(float(qian) * UNIT))
 
 
 def fmt(b: int) -> str:
-    """币 → 「xx.x」（钱）。"""
+    """小单位 → 「xx.x」（大单位）。"""
     return f"{b / UNIT:.1f}"
 
 
@@ -90,7 +90,7 @@ def get_entry(entry_id: int) -> dict[str, Any] | None:
 
 
 def balance() -> int:
-    """余额（币）。"""
+    """余额（小单位）。"""
     return int(_q("SELECT COALESCE(SUM(delta), 0) AS b FROM money_ledger")[0]["b"])
 
 
@@ -204,7 +204,7 @@ def _big_blocked(now: float) -> bool:
 
 def roll(now: float, ctx: dict[str, Any], rng: random.Random | None = None) -> dict[str, Any] | None:
     """这会儿要不要买东西、买哪一类、大概花多少。ctx：state（状态键）、spends（这个状态可能花钱）、negative（心情差）、hot、cold。
-    返回 {cat, price（大概想花多少，币）, cap（最多花得起多少，币）, big, impulse}，不买就 None。最终价格由模型按价格带定（purchase）。"""
+    返回 {cat, price（大概想花多少，小单位）, cap（最多花得起多少，小单位）, big, impulse}，不买就 None。最终价格由模型按价格带定（purchase）。"""
     rng = rng or random
     if not enabled() or ctx.get("state") in NO_SPEND_STATES:
         return None
@@ -265,7 +265,7 @@ def intent_spec(cat: str, max_price: float | None = None, rng: random.Random | N
 
 
 def _reserve(cat: str) -> int:
-    """买这类东西时，买完至少还要剩下多少（币）：神秘学用品很贵，她舍得，但不会把自己花到见底。"""
+    """买这类东西时，买完至少还要剩下多少（小单位）：贵的东西她舍得，但不会把自己花到见底。"""
     return bi(registry.num("money_low")) if cat in RESERVE_CATS else 0
 
 
@@ -348,7 +348,7 @@ def fallback_meal_price(cat: str, rng: random.Random | None = None) -> dict[str,
 def charge_meal(meal: str, method: str, dish: str, went_out: bool = False, rng: random.Random | None = None,
                 priced: dict[str, Any] | None = None) -> dict[str, Any] | None:
     """外卖、出去吃：从余额里扣（自己做、在家吃不花钱；和家人出门吃饭按设置由家里付）。余额不够就只扣到 0。
-    priced：make_dish 定好的 {price（一个人一份，钱）, pay（aa / treated / treat）, shop, band…}；没有就按价格带兜底。"""
+    priced：make_dish 定好的 {price（一个人一份，大单位）, pay（aa / treated / treat）, shop, band…}；没有就按价格带兜底。"""
     from . import meals
 
     if not enabled():
@@ -392,10 +392,6 @@ PURCHASE_PROMPT = """你是「{name}」。你的口吻（人设里的说话方�
 - 如果这个月零花钱很紧，可以带一点心疼或自嘲，但别哭穷。"""
 PURCHASE_PROMPT = PURCHASE_PROMPT.replace("{no_real}", C.pick("fictional_world", "不要现实里的国家、城市、学校名；"))
 
-# 神秘学用品的额外说明：很贵、悄悄学、不知道留不留
-OCCULT_EXTRA = (f"在这个世界里，神秘学人人都知道，但只有很有钱或有地位的人才用得起；哪怕是最普通的用具、最常见的材料，也要 800 {C.unit()}以上。"
-                "你是个想学的新人，平时舍不得，是攒了很久、咬牙才买的，买完会心疼；爸妈和朋友都不知道你在学。\n")
-OCCULT_KEEP = ', "keep": "这东西是不是会一直留着（用具、器物 = true；用掉就没有的材料，比如药草、粉末、墨水 = false）"'
 # 买书：item 写书名；这本书买回来只是摆在书架上（不可阅读）
 BOOK_EXTRA = (f"你买的是一本书：item 写成书名（虚构的，12 字以内，别用现实里真有的书名{C.pick('fictional_world', '，也别带现实里的地名')}）；"
               "你爱看法庭推理、游记、纪实文学、推理小说、诗集，reason 写为什么想买这本。\n")
@@ -416,7 +412,7 @@ def _truthy(v: Any) -> bool:
 
 def settle_price(cat: str, hint: int, cap: int | None, info: dict[str, Any] | None, item: str = "",
                  hi_override: float | None = None, rng: random.Random | None = None) -> tuple[int, dict[str, Any]]:
-    """定下最终价格（币）：模型给的（已检查过范围）→ 同一家店同一样东西跟上次一致 → 尾数 → 不超过花得起的。
+    """定下最终价格（小单位）：模型给的（已检查过范围）→ 同一家店同一样东西跟上次一致 → 尾数 → 不超过花得起的。
     info 为空（本地兜底）：按这一类默认的价格带，在大概想花的数附近取。"""
     rng = rng or random
     if info is None:
@@ -436,7 +432,7 @@ def settle_price(cat: str, hint: int, cap: int | None, info: dict[str, Any] | No
 
 async def make_purchase(settings: dict[str, Any], cat: str, price: int, ctx: dict[str, Any], rng: random.Random | None = None,
                         cap: int | None = None, impulse: bool = False) -> dict[str, Any]:
-    """返回 {item, reason, share_line, keep, price（币）, info}（keep：会不会一直留着，决定要不要放进房间）。
+    """返回 {item, reason, share_line, keep, price（小单位）, info}（keep：会不会一直留着，决定要不要放进房间）。
     price 参数是「大概想花多少」；最终价格由模型按价格带给出，超出允许范围就重想一次，还不行就夹回范围内（settle_price）。
     模型不可用 / 反复不合格时用本地兜底。"""
     out = await _make_purchase(settings, cat, price, ctx, rng, cap, impulse)
@@ -460,7 +456,7 @@ async def _make_purchase(settings: dict[str, Any], cat: str, price: int, ctx: di
     from . import notebook
 
     nb = notebook.life_block(" ".join([LABEL[cat], ctx.get("item_hint") or "", *(prices.BAND[b][1] for b in (prices.CAT_BANDS.get(cat) or ()) if b in prices.BAND)]),
-                             ctx.get("here"), chapters=("occult",) if cat == "occult" else ("price",))   # 小本子：这一带的店、物价印象
+                             ctx.get("here"), chapters=("price",))   # 小本子：这一带的店、物价印象
     system = PURCHASE_PROMPT.format(
         name=C.display_name(settings), voice=persona_lib.voice_excerpt(settings.get("system_prompt") or "", 900),
         season=ctx.get("season", ""), when=ctx.get("when", ""), weather=ctx.get("weather") or "天气一般", state=ctx.get("state_label", "在家"),
@@ -469,7 +465,7 @@ async def _make_purchase(settings: dict[str, Any], cat: str, price: int, ctx: di
         + ("\n这次是一时冲动，花得比平时多（可以超过平时的最高价）。" if hi_over else ""),
         fields=prices.FIELDS,
         extra=(f"你之前跟她说过要买「{ctx['item_hint']}」，买的就是它（item 写它，可以写得更具体）。\n" if ctx.get("item_hint") else "")
-        + {"occult": OCCULT_EXTRA, "book": BOOK_EXTRA}.get(cat, "") + (nb + "\n" if nb else ""), keep_field={"occult": OCCULT_KEEP, "book": BOOK_AUTHOR}.get(cat, ""))
+        + {"book": BOOK_EXTRA}.get(cat, "") + (nb + "\n" if nb else ""), keep_field={"book": BOOK_AUTHOR}.get(cat, ""))
     msgs = [{"role": "system", "content": system}, {"role": "user", "content": "写吧。"}]
     retried = False
     for _ in range(3):
@@ -500,7 +496,7 @@ async def _make_purchase(settings: dict[str, Any], cat: str, price: int, ctx: di
                                 "重新想一下，东西、档次和价格要对得上，还是输出同样的 JSON。"}]
             continue
         out = {"item": item, "reason": reason, "share_line": line or f"买了{item}", "info": info, "impression": impression,
-               "keep": _truthy(data.get("keep", True)) if cat == "occult" else True}
+               "keep": True}
         if cat == "book":
             out["author"] = guards.strip_exclaim(str(data.get("author") or "").strip())[:12] or booklook.random_author(rng)
         return out
@@ -639,7 +635,7 @@ def snapshot(ym: str | None = None) -> dict[str, Any]:
     if cur not in ms:
         ms = [cur] + ms
     entries = [_entry(r) for r in _q("SELECT * FROM money_ledger WHERE day LIKE ? ORDER BY id DESC", (ym + "%",))]
-    return {"enabled": enabled(), "balance": bal, "tier": tier(bal), "tier_label": TIER_LABEL[tier(bal)], "month": ym, "months": ms,
+    return {"enabled": enabled(), "unit": C.unit(), "balance": bal, "tier": tier(bal), "tier_label": TIER_LABEL[tier(bal)], "month": ym, "months": ms,
             "summary": month_summary(ym), "entries": entries, "next_grant": next_grant(), "monthly": registry.num("money_monthly"),
             "labels": LABEL}
 

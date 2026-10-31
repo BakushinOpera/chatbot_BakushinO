@@ -1,5 +1,5 @@
 """小本子（见 docs/已完成的计划/小本子与世界地图.md 第三节、docs/已完成的计划/phal-notebook-spec.md）：她自己认知中的世界——去过的地方、常去的店、吃过的东西、
-价格印象、听来的传闻、神秘学见闻、你告诉她的事。可能有误解，你可以改。
+价格印象、听来的传闻、你告诉她的事。可能有误解，你可以改。
 
 * 按角色存：``data/characters/<角色>/notebook.db``（单独一个 SQLite 文件；角色见 ``config.CHARACTER_ID``，现在只有 phal）。
   每次改动后导出一份 Markdown 到 ``notebook_export/``（每个章节一个文件，方便直接读 / 备份）。
@@ -32,10 +32,8 @@ TRUSTS = {"opinion": "她的看法", "confirmed": "已确认"}
 ACCURACY = {"accurate": "尽量准确（写入时用作者层校对）", "exaggerate": "允许夸张", "misread": "允许误解"}
 DEFAULT_CHAPTERS = [
     ("place", "地方", "accurate"), ("shop", "店铺", "accurate"), ("food", "吃的", "exaggerate"), ("price", "物价印象", "accurate"),
-    ("heard", "听说的事", "exaggerate"), ("occult", "神秘学", "misread"), ("told", f"{C.pronoun()}说的", "accurate"),
+    ("heard", "听说的事", "exaggerate"), ("told", f"{C.pronoun()}说的", "accurate"),
 ]
-if not C.feature("occult"):                    # 角色没开神秘学：新本子里没有这一章
-    DEFAULT_CHAPTERS = [c for c in DEFAULT_CHAPTERS if c[0] != "occult"]
 SHOP = "shop"
 NO_SHOP = "没记店名的"         # 店名是空的（模型没给）：价格记在这一条里
 TITLE_MAX, BODY_MAX, KW_MAX = 40, 5000, 20
@@ -763,7 +761,7 @@ NOTE_HEAD = "【你的小本子】你自己记在本子上的（是你的认识�
 def search(text: str, n: int, place_ids: list[str] | tuple[str, ...] = (), keys: list[str] | tuple[str, ...] = (),
            chapters: list[str] | tuple[str, ...] = (), exclude: set[int] | None = None) -> list[dict[str, Any]]:
     """按相关度挑条目：关键词（标题 + 补充的 + 所在地点名）出现在 text 里按长度计分；keys（这次行动定好的店名 / 地名）完全对上加分；
-    条目的地点在 place_ids 里加分；chapters 里的章节加一点（比如神秘学的事带上神秘学章节）。只看已启用的（待审的不算）。"""
+    条目的地点在 place_ids 里加分；chapters 里的章节加一点（比如路人的事带上听说的事）。只看已启用的（待审的不算）。"""
     if n <= 0:
         return []
     text = text or ""

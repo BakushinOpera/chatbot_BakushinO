@@ -80,7 +80,7 @@ def normalize(data: dict[str, Any], cat: str) -> dict[str, Any]:
     if gim == "rare" and b not in FOOD_BANDS:
         gim = "none"
     try:
-        price = float(str(data.get("price")).replace(C.unit(), "").replace("钱", "").replace("元", "").strip())
+        price = float(str(data.get("price")).replace(C.unit(), "").replace("块", "").replace("元", "").strip())
     except (TypeError, ValueError):
         price = 0.0
     shop = re.sub(r"\s+", "", str(data.get("shop") or ""))[:16]

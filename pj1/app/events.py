@@ -1,4 +1,4 @@
-"""生活事件：她的日子里偶尔发生的小事（神秘学、和家人、和朋友、和路人、生病）。
+"""生活事件：她的日子里偶尔发生的小事（和家人、和朋友、和路人、生病……）。
 
 怎么发生（第 9 节）：
 1. 每天早上起床后第一次 tick：代码先决定今天有几件事（默认 0 件 40%、1 件 40%、2 件 15%、3 件 5%），不是每天都有事；
@@ -10,7 +10,6 @@
 发生之后：内容由模型生成（带现实地名 / 禁词检查，只能用人物档案里的人），写进事件日志、
 「你自己说过的事」类记忆、相关人物的「最近发生过的事」；按概率（默认 50%）主动告诉我，
 没告诉我的事不写进日总结，但我问起「今天怎么样」时她可能会提到。
-神秘学的事记进「神秘学经验」，攒够几次她会有一条自己的小心得，也可能来问我（在她眼里我是神秘学家）。
 """
 
 from __future__ import annotations
@@ -184,10 +183,8 @@ EVENT_PROMPT = """你是「{name}」。你的口吻（人设里的说话方式�
 要求：
 - 小事就是小事，别写得戏剧化、别升华；
 - 只能用上面给出的人物；路人不起名字；不要现实里的国家、城市、学校名；刻意不提学校和班级；
-{occult_rules}"""
+"""
 EVENT_PROMPT = EVENT_PROMPT.replace("不要现实里的国家、城市、学校名；", C.pick("fictional_world", "不要现实里的国家、城市、学校名；"))
-OCCULT_RULES = ("- 神秘学的事：你只是新人，写成「好像有点感觉」「可能是巧合」这种；\n"
-                "- 神秘学的用具和材料在这个世界里很贵（最普通的也要 800 {unit}以上），你没有，只能凑合：不要写成你买了或拥有了神秘学的用具，除非上面的信息里已经有；")
 
 
 def local_event(etype: str, friend: str = "", tone: str = "neutral") -> str:
@@ -221,10 +218,9 @@ async def make_event(settings: dict[str, Any], etype: str, ctx: dict[str, Any], 
         return local
     people_txt = ("涉及的人（只能用他们）：" + "；".join(f"{p['name']}（{p['relation']}）{p['personality']}{p['how']}" for p in involved)) if involved else "不涉及固定的人物。"
     recent = "；".join(e["text"] for e in recent_events(5)) or "（没有）"
-    share_rule = ("如果要告诉她，你会怎么说，25 字以内，口语。这次是想**问她一件事**（在你眼里她懂神秘学），写成一个问句"
-                  if ask else "如果要告诉她，你会怎么说，25 字以内，口语，像随手发的消息")
-    result_rule = "success 有点成果 / fail 失败了 / weird 有点怪 / nothing 没什么，四选一" if etype == "occult" else ""
-    system = EVENT_PROMPT.format(unit=C.unit(), occult_rules=C.pick("occult", "\n" + OCCULT_RULES.replace("{unit}", C.unit())), 
+    share_rule = "如果要告诉她，你会怎么说，25 字以内，口语，像随手发的消息"
+    result_rule = ""
+    system = EVENT_PROMPT.format(unit=C.unit(), 
         name=C.display_name(settings), voice=persona_lib.voice_excerpt(settings.get("system_prompt") or "", 900),
         season=ctx.get("season", ""), when=ctx.get("when", ""), weather=ctx.get("weather") or "天气一般", state=ctx.get("state", "在家"),
         mood=ctx.get("mood") or "平静", label=label, desc=desc, people=people_txt, recent=recent,
@@ -247,14 +243,14 @@ async def make_event(settings: dict[str, Any], etype: str, ctx: dict[str, Any], 
 
 
 def _notes(etype: str, label: str, desc: str, ctx: dict[str, Any]) -> str:
-    """小本子：当时所在的地方 + 事件类型（神秘学的事带上神秘学章节，路人 / 网络的事带上听说的事）。"""
+    """小本子：当时所在的地方 + 事件类型（路人 / 网络的事带上听说的事）。"""
     from . import notebook, places
 
     try:
         here = places.here()["id"]
     except Exception:  # noqa: BLE001
         here = None
-    chs = {"occult": ("occult",), "stranger": ("heard", "place"), "net": ("heard",)}.get(etype, ())
+    chs = {"stranger": ("heard", "place"), "net": ("heard",)}.get(etype, ())
     nb = notebook.life_block(f"{label} {desc} {ctx.get('state', '')}", here, chapters=chs)
     return (nb + "\n") if nb else ""
 
@@ -276,81 +272,7 @@ def record(etype: str, text: str, mood: str, people_names: list[str], result: st
         for p in people.list_people(drafts=False):
             if p["name"] == name:
                 people.add_recent(p["id"], text, day)
-    if etype == "occult":
-        log = _occult_log()
-        log.append({"day": day, "text": text, "result": result or "nothing"})
-        db.save_settings({"occult_log": json.dumps(log[-60:], ensure_ascii=False)})
     return eid
-
-
-# ───────────────────────── 神秘学经验 ─────────────────────────
-def _occult_log() -> list[dict[str, Any]]:
-    try:
-        data = json.loads(db.get_settings().get("occult_log") or "[]")
-    except json.JSONDecodeError:
-        data = []
-    return data if isinstance(data, list) else []
-
-
-def occult_insights() -> list[str]:
-    try:
-        data = json.loads(db.get_settings().get("occult_insights") or "[]")
-    except json.JSONDecodeError:
-        data = []
-    return [str(x) for x in data] if isinstance(data, list) else []
-
-
-INSIGHT_PROMPT = """你是「{name}」，在悄悄学神秘学的新人。下面是你最近的神秘学经历（按时间）：
-{log}
-你已有的小心得：{old}
-
-请写一条新的小心得，一句话，25 字以内，是你自己摸索出来的体会，不确定的语气（「好像」「我觉得」），不要写成教科书，不要和已有的重复。
-只输出这一句。"""
-
-
-async def maybe_insight(settings: dict[str, Any]) -> str | None:
-    """每攒够几次神秘学经历，她有一条自己的小心得。返回新心得或 None。"""
-    log = _occult_log()
-    every = int(registry.num("occult_insight_every"))
-    if every <= 0 or not log or len(log) % every != 0:
-        return None
-    old = occult_insights()
-    if len(old) >= 12 and len(log) // every <= len(old):
-        return None
-    if llm.is_echo(settings):
-        new = "好像心静下来的时候更容易有感觉"
-    else:
-        try:
-            raw = await llm.complete(settings, [{"role": "system", "content": INSIGHT_PROMPT.format(
-                name=C.display_name(settings), log="\n".join(f"- {e['day'][5:]} {e['text']}（{e['result']}）" for e in log[-8:]),
-                old="；".join(old[-5:]) or "（还没有）")}, {"role": "user", "content": "写吧。"}], temperature=0.9)
-            new = raw.strip().strip("「」\"'")[:40]
-        except Exception:  # noqa: BLE001
-            return None
-    if not new or new in old:
-        return None
-    db.save_settings({"occult_insights": json.dumps((old + [new])[-12:], ensure_ascii=False)})
-    return new
-
-
-def occult_block(user_text: str = "") -> str:
-    """她的神秘学经验（聊到神秘学相关时才带进上下文）。角色没开神秘学就没有。"""
-    if not C.feature("occult"):
-        return ""
-    import re
-
-    if not re.search(r"神秘|占卜|塔罗|感应|玄学|灵|符|梦|星|仪式|冥想|直觉", user_text or ""):
-        return ""
-    log = _occult_log()
-    if not log:
-        return ""
-    ok = sum(1 for e in log if e.get("result") == "success")
-    lines = [f"【你的神秘学经验】你悄悄练了 {len(log)} 次，其中有点成果的 {ok} 次。最近：" + "；".join(e["text"] for e in log[-3:]) + "。"]
-    ins = occult_insights()
-    if ins:
-        lines.append("你自己摸出来的小心得：" + "；".join(ins[-3:]) + "。")
-    lines.append("她（用户）在你眼里是懂神秘学的人，你可以请教，但你只是新人，别装懂。")
-    return "\n".join(lines)
 
 
 # ───────────────────────── 给上下文 ─────────────────────────
@@ -374,5 +296,4 @@ def snapshot() -> dict[str, Any]:
     out_plan = [{"time": datetime.fromtimestamp(e["t"]).strftime("%H:%M"), "type": e["type"], "label": TYPES[e["type"]][0], "state": e["state"]}
                 for e in plan.get("events", [])]
     recent = [{"day": e["day"], "time": e["created_at"][11:16], "type": e["etype"], "text": e["text"], "shared": bool(e["shared"])} for e in recent_events(12)]
-    return {"day": plan.get("day"), "plan": out_plan, "sick_days": plan.get("sick_days", 0), "recent": recent,
-            "occult": {"count": len(_occult_log()), "insights": occult_insights()}}
+    return {"day": plan.get("day"), "plan": out_plan, "sick_days": plan.get("sick_days", 0), "recent": recent}

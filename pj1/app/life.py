@@ -1755,11 +1755,10 @@ async def _event_job(etype: str, after: str = "", tone: str | None = None) -> No
         if tone is None:
             tone = "bad" if etype == "sick" else B.draw_tone(mst, etype, now, p, random)
         M.save(mst)
-        ask = etype == "occult" and random.random() < registry.num("occult_ask_prob")
         ctx = _event_ctx()
         if after:
             ctx["state"] = f"刚{after}回来"
-        ev = await events.make_event(settings, etype, ctx, ask, tone=tone)
+        ev = await events.make_event(settings, etype, ctx, tone=tone)
         word = None
         if etype != "sick":                                  # 生病的心情和精力在 start_illness 里已经推过了
             mst = M.load()
@@ -1770,8 +1769,6 @@ async def _event_job(etype: str, after: str = "", tone: str | None = None) -> No
                 word = M.repick(mst, now, p)
             M.save(mst)
         eid = events.record(etype, ev["text"], word or "", ev["people"], ev["result"], tone=tone)
-        if etype == "occult":
-            await events.maybe_insight(settings)
         if random.random() < registry.num("event_share_prob") and reading.can_send_proactive():
             posted = _say([ev["share_line"]], {"kind": "event", "etype": etype, "event_id": eid}, counted=True, source="event")
             db.mark_event_shared(eid, bool(posted))

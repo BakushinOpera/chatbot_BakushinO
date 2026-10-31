@@ -1,4 +1,4 @@
-"""价格带和修正系数的默认值（设置页里都能改，见 registry.py 和 prices.py）。单位：钱（1 钱 ≈ 1 元）。
+"""价格带和修正系数的默认值（设置页里都能改，见 registry.py 和 prices.py）。单位：块（按浙江一个小县城的物价）。
 
 不 import 别的模块：registry.py 要在加载时读这里的默认值。
 """
@@ -35,12 +35,11 @@ BANDS: list[tuple[str, str, str, float, float, float, float, bool]] = [
     ("book", "书", "实体书", 20, 35, 65, 120, False),
     ("game", "买断游戏", "独立游戏、3A 大作", 15, 40, 120, 400, False),
     ("iap", "游戏内购", "月卡、小皮肤、抽卡", 6, 30, 128, 328, False),
-    ("occult", "神秘学用品", "占卜牌、摆锤、符石（很贵）", 800, 1000, 2000, 3000, False),
 ]
 BAND = {b[0]: b for b in BANDS}
 BAND_KEYS = [b[0] for b in BANDS]
 FOOD_BANDS = tuple(b[0] for b in BANDS if b[7])
-NO_MOD = ("game", "iap", "occult")                    # 游戏和神秘学用品不受档次 / 噱头 / 地点影响
+NO_MOD = ("game", "iap")                              # 游戏和内购不受档次 / 噱头 / 地点影响
 IAP_TIERS = (6, 30, 68, 128, 198, 328, 648)
 
 # (键, 名字, 系数, 说明)
@@ -81,7 +80,6 @@ CAT_BANDS: dict[str, tuple[str, ...]] = {
     "iap": ("iap",),
     "trinket": ("trinket",),
     "book": ("book",),
-    "occult": ("occult",),
     "takeout": ("delivery",),
     "dine": tuple(k for k in FOOD_BANDS if k not in ("delivery", "drink", "coffee", "snack", "fruit")),
 }

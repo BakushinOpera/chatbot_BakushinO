@@ -185,9 +185,8 @@ DRAFT_PROMPT = """你在帮一个 AI 角色「{name}」设定她身边固定的�
 - 名字是虚构的，不要用名人的名字；
 - {no_real}刻意不写他们在哪所学校、哪个班；
 - 口吻平实，不要写成小说人物介绍，不要夸张的设定；
-{occult_line}"""
+"""
 DRAFT_PROMPT = (DRAFT_PROMPT.replace("{no_real}", C.pick("fictional_world", "不要出现任何现实里的国家、城市、学校名；"))
-                .replace("{occult_line}", C.pick("occult", "\n- 其中最多一个人对神秘学有一点点兴趣，其余都和神秘学无关。"))
                 .replace("{where}", C.pick("fictional_world", "一个虚构的城市里", "一个小县城里")))
 
 

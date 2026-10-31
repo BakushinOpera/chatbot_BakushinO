@@ -320,7 +320,6 @@ INTENTS: list[tuple[str, tuple[str, ...], str, str]] = [
     ("calligraphy", ("calligraphy",), "练一页字", ""),
     ("exercise", ("exercise",), "跳会儿绳 / 做做瑜伽", ""),
     ("draw", ("draw",), "画点东西", ""),
-    ("occult", ("occult",), "练一下神秘学", ""),
     ("album", ("album",), "整理一下相册", ""),
     ("photo", ("photo",), "出门拍点照片", "out"),
     ("walk", ("walk",), "出去走走", "out"),

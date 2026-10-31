@@ -1,4 +1,4 @@
-"""世界设定：Phal 所在世界的常识、神秘学……放在 ``data/world/`` 下，每一类一个文件夹，**分开存**。
+"""世界设定：Phal 所在世界的常识……放在 ``data/world/`` 下，每一类一个文件夹，**分开存**。
 
 目录结构（你往里填；每一类就是一个子文件夹，想加第三类、第四类，直接新建文件夹就行）::
 
@@ -7,7 +7,7 @@
         _总纲.md           ← 总纲：常驻上下文（名字以 _ 开头，或文件名里带「总纲」）
         某国.md             ← 一个国家 / 地点 / 概念一个文件，只有消息里出现关键词才会被带进上下文
         某城.md
-      新人神秘学/
+      某一类/
         _总纲.md
         _提示.txt           ← 这一类的口吻提示（可选），带条目时会先放在条目前面
 
@@ -30,7 +30,7 @@ from .config import DATA_DIR
 
 WORLD_DIR = DATA_DIR / "world"
 PLACES_FILE = WORLD_DIR / "_places.json"     # 地点库（places.py 通过下面的 read_places / write_places 读写）
-DEFAULT_CATEGORIES = ["世界常识", "新人神秘学"] if C.feature("occult") else ["世界常识"]      # 角色没开神秘学：不建「新人神秘学」
+DEFAULT_CATEGORIES = ["世界常识"]
 EXTS = (".md", ".txt")
 
 OVERVIEW_CAP = 1800          # 每一类总纲最多常驻多少字（默认值；设置页 world_overview_cap）
@@ -50,10 +50,7 @@ README = """# 世界设定目录
 改完保存即可，下一条消息就生效，不用重启。
 """
 
-HINTS = {
-    "新人神秘学": "（以下是你作为神秘学新人知道的一点东西：只是听来的、猜的、可能理解错的，"
-                   "说的时候用「我听说」「我感觉」「不知道对不对」，别说得很确定。）",
-}
+HINTS: dict[str, str] = {}      # 某一类的默认口吻提示（也可以在那一类的 _提示.txt 里写）
 
 _KW_LINE = re.compile(r"^\s*(?:关键词|关键字|keywords?)\s*[:：]\s*(.+?)\s*$", re.I)
 _SPLIT = re.compile(r"[,，、;；/\s]+")

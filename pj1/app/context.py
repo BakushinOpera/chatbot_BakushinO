@@ -402,9 +402,6 @@ def build_context(
     ev_text = events.context_block()                # 今天发生了但还没告诉她的事
     if ev_text:
         volatile.append(ev_text)
-    occ_text = events.occult_block(user_text)       # 聊到神秘学时：她的神秘学经验
-    if occ_text:
-        volatile.append(occ_text)
     ppl_recent = people.recent_block(user_text)
     if ppl_recent:
         volatile.append(ppl_recent)

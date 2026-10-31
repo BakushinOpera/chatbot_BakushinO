@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 IDLE_STATES = {"tea", "tea_brew", "daze", "laze", "rain_watch", "music", "unbox", "netshop", "album", "video", "sick"}
 BUSY_STATES = {"walk", "shop", "friends", "dine_out", "photo", "errand", "boardgame_friends", "game", "anime", "create", "homework",
                "draw", "read", "cook", "eat", "eat_alone", "shower", "nap", "call", "boardgame_online", "craft", "calligraphy",
-               "bake", "sfx", "occult", "exercise", "puzzle_family", "synth", "tidy", "shelf", "tryon"}
+               "bake", "sfx", "exercise", "puzzle_family", "synth", "tidy", "shelf", "tryon"}
 TIERS = ("idle", "normal", "busy")
 TIER_LABEL = {"idle": "闲着", "normal": "一般", "busy": "忙"}
 

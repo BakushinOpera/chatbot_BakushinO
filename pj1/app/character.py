@@ -6,7 +6,7 @@
   这两个在 states.py / event_defs.py 导入时读，所以本模块只依赖 config，不依赖别的业务模块。
 * 提示词在发给模型前统一过一遍 ``localize``：代码里的提示词写的是「Phal」、用「她」指用户——按这个角色的名字、
   对用户的称呼（``user_pronoun``）和 ``terms`` 换掉。
-* 公开的默认值是现实世界版（中国浙江新昌、元、用户是「他」、没有神秘学）；你自己的 Phal 用本机的 character.json 覆盖。
+* 公开的默认值是现实世界版（中国浙江新昌、块、用户是「他」）；你自己的 Phal 用本机的 character.json 覆盖。
 """
 
 from __future__ import annotations
@@ -26,15 +26,15 @@ DEFAULTS: dict[str, Any] = {
     "id": "phal",
     "name": "Phal",
     # 钱：账本里存整数的「小单位」，显示成「xx.x 大单位」。real：和现实的对应（空 = 就是现实的钱，不用说明）
-    "currency": {"unit": "元", "sub": "角", "sub_per_unit": 10, "real": "", "price_world": "按浙江一个小县城的物价想"},
+    "currency": {"unit": "块", "sub": "毛", "sub_per_unit": 10, "real": "", "price_world": "按浙江一个小县城的物价想"},
     # 提示词里怎么称呼用户（代码里写的是「她」，发给模型前换成这个）
     "user_pronoun": "他",
     # 你（用户）在她的世界里在哪、是谁（user_place 空 = 不提）
     "user_place": "",
     "user_desc": "很好的人",
-    # 可选的内容：occult = 神秘学（练习神秘学的状态、神秘学的事、神秘学用品、小本子的神秘学章节……）；
+    # 可选的内容：
     # fictional_world = 她住在虚构的世界里（提示词要求不提现实里的国家 / 城市，命中现实地名的回复会被拦下重写）
-    "features": {"occult": False, "fictional_world": False},
+    "features": {"fictional_world": False},
     # QQ 群聊里「关于主人的基础信息」的默认值
     "qq_owner_basic": "他是我的好朋友。他偶尔会给你书，也会送你或寄给你别的东西。书架上的书，除了你自己买的以外，都是他给你买的。",
     # QQ 群聊人设补充的默认值
@@ -153,8 +153,8 @@ def currency() -> dict[str, Any]:
 
 
 def unit() -> str:
-    """钱的大单位（「元」）。"""
-    return str(currency().get("unit") or "元")
+    """钱的大单位（默认「块」）。"""
+    return str(currency().get("unit") or "块")
 
 
 def sub_per_unit() -> int:
@@ -162,7 +162,7 @@ def sub_per_unit() -> int:
 
 
 def money_note() -> str:
-    """「1 钱大致相当于现实里的 1 元，按……的物价想」；现实的钱就只有后半句。"""
+    """「（和现实的对应），按……的物价想」；现实的钱就只有后半句。"""
     c = currency()
     return "，".join(x for x in (c.get("real"), c.get("price_world")) if x)
 
@@ -177,7 +177,7 @@ def pronoun() -> str:
 
 
 def feature(key: str) -> bool:
-    """可选内容开没开（occult = 神秘学，fictional_world = 虚构世界）。"""
+    """可选内容开没开（fictional_world = 虚构世界）。"""
     return bool((get("features") or {}).get(key))
 
 

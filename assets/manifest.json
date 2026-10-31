@@ -184,7 +184,6 @@
     "video": { "spot": "free", "label": "刷视频", "seat": { "spot": "sofa_lie", "anim": "sofa_lie_video" } },
     "game": { "spot": "free", "label": "打游戏", "seat": { "spot": "desk_seat", "anim": "seat_game" } },
     "create": { "spot": "desk", "label": "试图创作", "desk": "B", "seat": { "spot": "desk_seat", "anim": "seat_write" } },
-    "occult": { "spot": "free", "label": "练习神秘学" },
     "sfx": { "spot": "free", "label": "帮妈妈录音效" },
     "cook": { "spot": "away", "where": "在厨房做饭", "label": "做饭" },
     "eat": { "spot": "away", "where": "在客厅和家人一起吃饭", "label": "吃饭" },
