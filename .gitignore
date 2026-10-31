@@ -55,3 +55,6 @@ pj1/index.html
 
 # 给朋友的免安装版 zip（传到 GitHub Releases，不进 git）
 release/
+
+# 学习笔记只在本机（不上传）
+docs/learning/
