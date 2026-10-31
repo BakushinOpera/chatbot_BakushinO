@@ -1,0 +1,57 @@
+# 只管 Phal 聊天 bot：pj1（后端 + 网页）、pj2（桌面外壳）、assets（房间素材）、docs、计划
+# 首次推送前要把要上传的内容列给你确认（见 CLAUDE.md）
+
+# 本地数据：聊天记录、世界设定、小本子、书、写作、QQ 配置
+pj1/data/
+.env
+**/.env
+!**/.env.example
+
+# 打包产物、免安装版
+Phal/
+pj2/dist/
+pj2/build/
+
+# 依赖 / 工具链 / 缓存
+node_modules/
+node.exe
+npm
+npm.cmd
+npm.ps1
+npx
+npx.cmd
+npx.ps1
+corepack
+corepack.cmd
+nodevars.bat
+install_tools.bat
+.venv/
+__pycache__/
+*.pyc
+.pipcache/
+
+# 测试 / 临时
+pj1/.tmp/
+pj1/.verify/
+pj1/.shot/
+pj1/.check/
+pj1/.smoke/
+pj1/chat-*/
+pj1/tmp*/
+*.log
+
+# 备份、灰模原型、对比图、本机杂项
+backup-*/
+greyBoxTest/
+greyBoxDeskScene/
+/*.png
+*.lnk
+pj1/brightness-monitor.csv
+pj1/monitor-brightness.ps1
+.claude/
+pj1/start-deepseek-harness.cmd
+pj1/wait-for-port.ps1
+pj1/index.html
+
+# 给朋友的免安装版 zip（传到 GitHub Releases，不进 git）
+release/

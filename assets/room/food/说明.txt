@@ -1,0 +1,12 @@
+食物的贴图放在这个文件夹里（v10）。
+
+种类：甜点 dessert / 奶茶 milktea / 零食 snack / 水果 fruit / 饭菜 meal。
+放好图以后，在 manifest.json → room.clutter 里登记一个键（和种类同名），比如：
+
+  "fruit": { "file": "room/food/fruit.png", "w": 图片像素宽, "h": 图片像素高, "width_cm": 12 }
+
+* 甜点、水果、饭菜：一份一张，平放；width_cm = 在桌上占多宽。
+* 奶茶、零食现在用的是 room/clutter/ 里那三张（milktea / snack_single / snack_chunk），想换也可以把新图放这里、改 file 路径。
+* 要真透明的 PNG（背景不能是画出来的棋盘格）。
+* 没登记的种类，房间里用代码画的形体（碟子 + 蛋糕、盘子 + 果子、碗 + 菜）。
+* 同一套图书桌的杂物区和北墙边的食物桌都用。

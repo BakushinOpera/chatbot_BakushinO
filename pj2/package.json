@@ -1,0 +1,42 @@
+{
+  "name": "phal-desktop",
+  "productName": "AI 聊天",
+  "version": "1.0.0",
+  "description": "Phal 的 Windows 桌面应用（Electron 外壳 + 本地 Python 后端）",
+  "main": "main.js",
+  "author": "yuhua",
+  "private": true,
+  "scripts": {
+    "start": "electron .",
+    "build:sidecar": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-sidecar.ps1",
+    "dist": "electron-builder --win nsis",
+    "pack": "electron-builder --win nsis",
+    "deploy:portable": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-portable.ps1"
+  },
+  "build": {
+    "appId": "local.phal.desktop",
+    "productName": "AI 聊天",
+    "directories": { "output": "dist" },
+    "asar": false,
+    "files": ["main.js", "preload.js", "package.json", "assets/**"],
+    "extraResources": [
+      { "from": "build/sidecar/phal-server", "to": "sidecar/phal-server" },
+      { "from": "../assets", "to": "assets", "filter": ["**/*", "!**/originals/**"] }
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "assets/whale-girl.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false,
+      "shortcutName": "AI 聊天",
+      "deleteAppDataOnUninstall": false
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.0.0"
+  }
+}

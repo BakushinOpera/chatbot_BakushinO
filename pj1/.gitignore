@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+.tmp/
+.verify/
+.shot/
+.check/
+.smoke/
+.pipcache/
+.env
+*.lnk

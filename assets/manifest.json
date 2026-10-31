@@ -1,0 +1,224 @@
+{
+  "version": 1,
+  "note": "素材清单（程序读这份文件；说明文字见同目录的「素材清单.md」）。替换素材：把新图放进对应文件夹、文件名保持一致，或者在这里改 file；锚点 anchor 是「脚底中点」在图里的位置（0~1，x 从左到右，y 从上到下）。刷新房间页面就能看到。",
+  "character": {
+    "name": "Phal（蓝发鲸鱼女仆，Q 版）",
+    "height_cm": 115,
+    "height_note": "角色在房间里的身高（厘米）。房间墙高 240cm、床长 205cm、椅背 90cm；所有角色图都按「头顶到脚底的像素高度」缩放到这个身高，所以不同图里的角色一样大。",
+    "bubble": true,
+    "assets": {
+      "stand": {
+        "file": "character/正面.png",
+        "kind": "static",
+        "facing": "front",
+        "anchor": [0.5, 1.0],
+        "use": "站立（朝向镜头）。到了位置之后没有专属动作的状态都用它，带轻微的呼吸起伏。"
+      },
+      "walk_side": {
+        "file": "character/侧面.png",
+        "kind": "static",
+        "facing": "left",
+        "anchor": [0.5, 1.0],
+        "use": "走路（水平方向）。图里的角色朝左；往右走时左右镜像。没有走路帧，所以用「静态图 + 上下弹跳 + 平移」代替。"
+      },
+      "walk_back": {
+        "file": "character/背面.png",
+        "kind": "static",
+        "facing": "back",
+        "anchor": [0.5, 1.0],
+        "use": "背对镜头：往房间里面（屏幕上方）走，以及站在书桌 / 书架 / 衣柜前面对着它们的时候。"
+      },
+      "tea": {
+        "file": "character/蓝发鲸鱼女仆茶饮五连帧.png",
+        "kind": "frames",
+        "frames": 5,
+        "layout": "row",
+        "facing": "front",
+        "anchor": [0.5, 1.0],
+        "chroma": "auto",
+        "durations_ms": [900, 700, 1000, 1000, 800],
+        "loop": true,
+        "stand": true,
+        "use": "喝茶（站着喝，不绑定具体位置，在房间里的空地上）。五帧：捧杯 → 小口喝 → 热气 → 眯眼笑 → 睁眼笑，循环播放。",
+        "note": "这张图不是真透明（棋盘格是画进像素里的）。chroma=auto：程序加载时自动把和边缘相连的浅灰 / 白色背景抠掉；以后换成真透明的 PNG 就会直接用，不抠。"
+      },
+      "seat_write": {
+        "use": "坐在书桌前写字（写作业、试图创作、练字）",
+        "views": {
+          "room": { "file": "character/poses/seat_write_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/seat_write_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "seat_draw": {
+        "use": "坐在书桌前画画（画画、做手工）",
+        "views": {
+          "room": { "file": "character/poses/seat_draw_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/seat_draw_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "seat_game": {
+        "use": "坐在书桌前玩电脑（打游戏、整理相册、线上桌游）",
+        "views": {
+          "room": { "file": "character/poses/seat_game_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/seat_game_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "seat_daze": {
+        "use": "坐在书桌前发呆（托腮）",
+        "views": {
+          "room": { "file": "character/poses/seat_daze_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/seat_daze_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "sofa_sit_daze": {
+        "use": "坐在沙发上发呆",
+        "views": {
+          "room": { "file": "character/poses/sofa_sit_daze_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/sofa_sit_daze_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "sofa_sit_phone": {
+        "use": "坐在沙发上打电话（和朋友打电话）",
+        "views": {
+          "room": { "file": "character/poses/sofa_sit_phone_房间视角.png", "anchor": [0.5, 0.8], "height_cm": 92 },
+          "desk": { "file": "character/poses/sofa_sit_phone_书桌视角.png", "anchor": [0.5, 0.72], "height_cm": 100 }
+        }
+      },
+      "sofa_lie_video": {
+        "use": "躺在沙发上刷视频（刷视频、逛网店）",
+        "views": {
+          "room": { "file": "character/poses/sofa_lie_video_房间视角.png", "anchor": [0.5, 0.55], "height_cm": 78 },
+          "desk": { "file": "character/poses/sofa_lie_video_书桌视角.png", "anchor": [0.5, 0.6], "height_cm": 46 }
+        }
+      },
+      "sofa_lie_anime": {
+        "use": "躺在沙发上追剧",
+        "views": {
+          "room": { "file": "character/poses/sofa_lie_anime_房间视角.png", "anchor": [0.5, 0.55], "height_cm": 78 },
+          "desk": { "file": "character/poses/sofa_lie_anime_书桌视角.png", "anchor": [0.5, 0.6], "height_cm": 46 }
+        }
+      },
+      "bed_sleep": {
+        "use": "躺在床上盖着被子（睡觉、午睡、生病、赖床）。只有房间视角（书桌视角里看不到床）。",
+        "views": { "room": { "file": "character/poses/bed_sleep.png", "anchor": [0.5, 0.5], "height_cm": 110 } }
+      },
+      "stand_music": { "file": "character/poses/stand_music.png", "kind": "static", "anchor": [0.5, 1.0], "use": "站在床头柜旁戴耳机听歌（只有房间视角）" },
+      "stand_wardrobe": { "file": "character/poses/stand_wardrobe.png", "kind": "static", "anchor": [0.5, 1.0], "use": "对着衣柜拿衣服比划（收拾房间、试衣服；只有房间视角）" },
+      "stand_read": {
+        "use": "站在书架前捧着书看（看书、整理书架）。站姿：按身高缩放，锚点是脚底。",
+        "stand": true,
+        "views": {
+          "room": { "file": "character/poses/stand_read_房间视角.png", "anchor": [0.5, 1.0] },
+          "desk": { "file": "character/poses/stand_read_书桌视角.png", "anchor": [0.5, 1.0] }
+        }
+      }
+    },
+    "walk": {
+      "mode": "static_bounce",
+      "speed_cm_s": 75,
+      "bounce_cm": 3.2,
+      "bounce_hz": 3.4,
+      "note": "素材不足时的走路：静态图 + 弹跳 + 平移。以后有走路帧，把 mode 改成 frames 并在 assets 里加 walk_* 的帧图即可（见素材清单.md 的「还缺的素材」）。"
+    },
+    "idle": { "breathe_pct": 1.6, "breathe_hz": 0.45 }
+  },
+  "room": {
+    "style": "B",
+    "scale": 1.6,
+    "layout": "v5",
+    "note": "房间、家具、书、小物件现在都是代码画的 SVG（形体来自 greyBoxTest 的统一灰模：房间 590×330×270cm，书桌 L 形在东北角，窗在南墙；房间视角 = 等距，书桌视角 = 透视，两个视角是同一份场景）。风格 A 水彩 / B 贴纸白边（C 线稿已删掉），style 决定默认用哪一种；页面右上角可以在 A / B 之间切换。想换成自己画的贴图：先和我说，再决定每件家具的贴图尺寸和锚点（furniture/ 等文件夹已经留好）。",
+    "clutter": {
+      "note": "杂物区（书桌靠北墙、显示器右边）的当日消耗品贴图。奶茶立着放，height_cm = 连吸管的高度；零食平放，width_cm = 在桌上占的宽度。桌上只有一袋零食用 snack_single，两袋及以上合成一堆用 snack_chunk。w / h 是图片像素大小（算宽高比用）。",
+      "milktea": { "file": "room/clutter/milktea.png", "w": 308, "h": 617, "height_cm": 15 },
+      "snack_single": { "file": "room/clutter/snack_single.png", "w": 577, "h": 450, "width_cm": 16 },
+      "snack_chunk": { "file": "room/clutter/snack_chunk.png", "w": 743, "h": 540, "width_cm": 21 },
+      "food_note": "v10：食物也可能放在北墙边的食物桌上（同一套贴图）。甜点 dessert、水果 fruit、饭菜 meal 的贴图放在 room/food/ 里，登记写法和 snack_single 一样（平放，width_cm），比如 \"fruit\": { \"file\": \"room/food/fruit.png\", \"w\": 像素宽, \"h\": 像素高, \"width_cm\": 12 }；没登记的种类用代码画。"
+    }
+  },
+  "spots": {
+    "note": "房间里的位置（世界坐标，厘米；x 向西、y 向南、z 向上，和 greyBoxTest 的灰模一样：房间 x -225（东墙）~365（西墙）、y 30（北墙）~360（南墙 = 窗墙））。每个位置是「站在哪、朝向哪」：face 是方位角（从北往东量的度数：0 朝北 / 90 朝东 / 180 朝南 / 270 朝西）；空地上的 face 都朝南偏东（150~180°）：背对书桌（书桌视角里看到她的背面），房间视角里多半看到正面或侧面。不写 face 就面朝东南（等距相机的方向）。seat: true 的位置是「坐在椅子上」，没有坐姿素材时不会去。",
+    "desk": { "x": 24, "y": 118, "face": 0, "label": "书桌前（站着，桌子西端）" },
+    "desk_seat": { "x": -60, "y": 142, "face": 25.6, "seat": true, "pose": "sit", "z_cm": 65, "after": ["girlchair/seat", "girlchair/back"], "ahead": { "room": ["girlchair/back"] }, "label": "坐在书桌前的椅子上（朝显示器）" },
+    "sofa_sit": { "x": -95, "y": 322, "face": 0, "seat": true, "pose": "sit", "z_cm": 45, "after": ["sofa/seat"], "label": "坐在沙发上（朝北，背靠窗）" },
+    "sofa_lie": { "x": -95, "y": 322, "face": 0, "seat": true, "pose": "lie", "z_cm": 45, "head": 90, "after": ["sofa/seat"], "label": "躺在沙发上（头朝东）" },
+    "bookshelf": { "x": -150, "y": 262, "face": 90, "label": "书架前" },
+    "wardrobe": { "x": 298, "y": 112, "face": 0, "label": "衣柜前" },
+    "bed": { "x": 252, "y": 214, "face": 180, "label": "床边（北侧）" },
+    "bed_lie": { "x": 280, "y": 294, "face": 270, "seat": true, "pose": "lie", "z_cm": 48, "head": 270, "after": ["bed/frame", "bed/mattress", "bed/pillow-1", "bed/pillow-2", "bed/blanket"], "label": "躺在床上（头朝西，靠枕头）" },
+    "nightstand": { "x": 296, "y": 209, "face": 270, "label": "床头柜旁" },
+    "window": { "x": -100, "y": 276, "face": 180, "label": "窗边（沙发前面，朝窗）" },
+    "free_a": { "x": 60, "y": 215, "face": 155, "label": "空地（房间中间）" },
+    "free_b": { "x": 170, "y": 150, "face": 180, "label": "空地（衣柜和床之间）" },
+    "free_c": { "x": -20, "y": 255, "face": 160, "label": "空地（书架和床之间）" },
+    "free_d": { "x": 88, "y": 300, "face": 155, "label": "空地（落地灯旁）" },
+    "food_table": { "x": 130, "y": 102, "face": 0, "label": "食物桌前（北墙边，书桌和衣柜之间）" }
+  },
+  "waypoints": {
+    "note": "走路时经过的点（都在空地板上，连线不穿过家具）；节点之间的连线在 edges 里。位置也可以直接用 spots 里的名字。",
+    "edges": [
+      ["free_a", "free_b"], ["free_a", "desk"], ["free_a", "bookshelf"], ["free_a", "bed"], ["free_a", "free_c"], ["free_a", "nightstand"], ["free_a", "free_d"], ["free_a", "window"],
+      ["free_b", "desk"], ["free_b", "wardrobe"], ["free_b", "bed"], ["free_b", "nightstand"], ["desk", "desk_seat"],
+      ["free_c", "bookshelf"], ["free_c", "window"], ["free_c", "free_d"], ["bookshelf", "window"], ["wardrobe", "nightstand"], ["window", "sofa_sit"], ["window", "sofa_lie"],
+      ["food_table", "free_b"], ["bed", "bed_lie"], ["food_table", "free_a"], ["food_table", "desk"]
+    ]
+  },
+  "seat": {
+    "note": "坐 / 躺的接口（椅子、沙发；现在没有坐姿 / 躺姿素材，先留好）：位置里 seat: true，pose 是 sit（坐）或 lie（躺，head = 头朝哪个方位角），z_cm 是身体离地多高，after 是必须画在她后面的家具。states.<状态>.seat = { spot: \"desk_seat\", anim: \"seat_write\" } 表示这个状态下她坐在椅子上，用 character.assets.seat_write 这套图；还没有坐姿图时：placeholder 为 true 就用站姿图临时顶替（坐：书桌视角用正面图、房间视角用背面图；躺：把站姿图横过来），false 就退回去站在 states.<状态>.spot。一个状态可以有几种做法：states.<状态>.variants = [{ weight, seat }, ...]，进入这个状态时按权重抽一种（不写 seat 的那种 = 原样站着）。坐姿的图可以按视角各给一套：assets.seat_write.views = { room: {...}, desk: {...} }。图的锚点 anchor 是「坐骨（座面中心）」在图里的位置，z_cm 是它离地的高度，height_cm 是整张图折合多少厘米高。示例见素材清单.md 的 3.3。",
+    "z_cm": 65,
+    "placeholder": true
+  },
+  "desk": {
+    "note": "书桌上的东西跟着她的状态变：states.<状态>.desk 写 \"B\" 就是笔记本摊开（她在写作业 / 写东西），不写就是 \"A\"（笔记本合上、叠在书摞上）。两个视角里的书桌都跟着变。",
+    "default": "A"
+  },
+  "states": {
+    "note": "每个状态绑定房间里的一个位置（发呆有三种做法：原地站着 / 坐在书桌边 / 坐在沙发上，各 1/3，权重可调；刷视频、追剧躺在沙发上）；换状态时角色走过去，再播放这个状态的动作（anim；没有专属动作就站着，头上冒一个小气泡写状态名）。spot 写 free 表示在几处空地里随机选一处；away 表示不在房间里（在厨房 / 浴室 / 外面），角色淡出，页面上写她在哪。seat：坐在书桌边的接口（见上面的 seat）。desk：这个状态下书桌上的笔记本是合上（A）还是摊开（B）。",
+    "tea_brew": { "spot": "away", "where": "在客厅泡茶", "label": "泡茶" },
+    "tea": { "spot": "free", "anim": "tea", "icon": "tea", "label": "喝茶" },
+    "read": { "spot": "bookshelf", "anim": "stand_read", "label": "看书" },
+    "daze": { "spot": "free", "label": "发呆", "variants": [
+      { "weight": 1 },
+      { "weight": 1, "seat": { "spot": "desk_seat", "anim": "seat_daze" } },
+      { "weight": 1, "seat": { "spot": "sofa_sit", "anim": "sofa_sit_daze" } }
+    ] },
+    "video": { "spot": "free", "label": "刷视频", "seat": { "spot": "sofa_lie", "anim": "sofa_lie_video" } },
+    "game": { "spot": "free", "label": "打游戏", "seat": { "spot": "desk_seat", "anim": "seat_game" } },
+    "create": { "spot": "desk", "label": "试图创作", "desk": "B", "seat": { "spot": "desk_seat", "anim": "seat_write" } },
+    "occult": { "spot": "free", "label": "练习神秘学" },
+    "sfx": { "spot": "free", "label": "帮妈妈录音效" },
+    "cook": { "spot": "away", "where": "在厨房做饭", "label": "做饭" },
+    "eat": { "spot": "away", "where": "在客厅和家人一起吃饭", "label": "吃饭" },
+    "eat_alone": { "spot": "food_table", "label": "一个人在房间吃饭" },
+    "dine_out": { "spot": "away", "where": "在外面吃饭", "label": "出门吃饭" },
+    "homework": { "spot": "desk", "label": "写作业", "desk": "B", "seat": { "spot": "desk_seat", "anim": "seat_write" } },
+    "shower": { "spot": "away", "where": "在浴室洗澡", "label": "洗澡" },
+    "nap": { "spot": "bed", "label": "午睡", "bubble": "zzz", "seat": { "spot": "bed_lie", "anim": "bed_sleep" } },
+    "music": { "spot": "nightstand", "anim": "stand_music", "label": "听歌" },
+    "anime": { "spot": "free", "label": "追剧", "seat": { "spot": "sofa_lie", "anim": "sofa_lie_anime" } },
+    "draw": { "spot": "desk", "label": "画画", "seat": { "spot": "desk_seat", "anim": "seat_draw" } },
+    "tidy": { "spot": "wardrobe", "anim": "stand_wardrobe", "label": "收拾房间" },
+    "walk": { "spot": "away", "where": "在外面散步", "label": "散步" },
+    "shop": { "spot": "away", "where": "在外面逛街", "label": "逛街" },
+    "friends": { "spot": "away", "where": "和朋友在外面", "label": "和朋友出去" },
+    "rain_watch": { "spot": "window", "label": "趴窗边看雨" },
+    "sick": { "spot": "bed", "label": "生病躺着", "bubble": "zzz", "seat": { "spot": "bed_lie", "anim": "bed_sleep" } },
+    "calligraphy": { "spot": "desk", "label": "练字", "desk": "B", "seat": { "spot": "desk_seat", "anim": "seat_write" } },
+    "craft": { "spot": "desk", "label": "做手工", "seat": { "spot": "desk_seat", "anim": "seat_draw" } },
+    "bake": { "spot": "away", "where": "在厨房烤甜点", "label": "烘焙" },
+    "photo": { "spot": "away", "where": "在外面拍照", "label": "出门拍照" },
+    "album": { "spot": "desk", "label": "整理相册", "seat": { "spot": "desk_seat", "anim": "seat_game" } },
+    "netshop": { "spot": "free", "label": "逛网店", "seat": { "spot": "sofa_lie", "anim": "sofa_lie_video" } },
+    "call": { "spot": "free", "label": "和朋友打电话", "seat": { "spot": "sofa_sit", "anim": "sofa_sit_phone" } },
+    "tryon": { "spot": "wardrobe", "anim": "stand_wardrobe", "label": "试衣服" },
+    "puzzle_family": { "spot": "away", "where": "在客厅和家人拼图 / 玩桌游", "label": "和家人拼图 / 玩桌游" },
+    "boardgame_friends": { "spot": "away", "where": "和朋友在外面玩桌游", "label": "和朋友玩桌游" },
+    "boardgame_online": { "spot": "desk", "label": "和朋友线上玩桌游", "seat": { "spot": "desk_seat", "anim": "seat_game" } },
+    "synth": { "spot": "away", "where": "在妈妈的工作间玩合成器", "label": "玩妈妈的合成器" },
+    "errand": { "spot": "away", "where": "出门帮妈妈跑腿", "label": "跑腿" },
+    "unbox": { "spot": "free", "label": "拆快递" },
+    "laze": { "spot": "bed", "label": "赖床", "bubble": "zzz", "seat": { "spot": "bed_lie", "anim": "bed_sleep" } },
+    "exercise": { "spot": "free", "label": "跳绳 / 瑜伽" },
+    "shelf": { "spot": "bookshelf", "anim": "stand_read", "label": "整理书架" },
+    "sleep": { "spot": "bed", "label": "睡觉", "bubble": "zzz", "seat": { "spot": "bed_lie", "anim": "bed_sleep" } }
+  }
+}

@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<title>AI 聊天</title>
+<link rel="icon" href="/static/whale-girl.ico" type="image/x-icon" />
+<link rel="stylesheet" href="/static/style.css?v=49" />
+<link rel="stylesheet" href="/static/reader.css?v=11" />
+</head>
+<body>
+
+<!-- 印章的「油墨」质感：边缘毛糙、浓淡不均 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" result="d"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.75" result="mask"/>
+    <feComposite in="d" in2="mask" operator="in"/>
+  </filter>
+</svg>
+
+<header class="topbar">
+  <div class="topbar__center">
+    <div class="nameline">
+      <h1 class="persona" id="personaName">·</h1>
+      <span class="clock" id="clock"></span>
+    </div>
+    <a class="lifebar" id="lifebar" href="#" hidden title="Phal 在做的事">
+      <span class="lifebar__icon" id="lifeIcon"></span>
+      <span class="lifebar__label" id="lifeLabel"></span>
+      <span class="lifebar__blurb" id="lifeBlurb"></span>
+      <span class="lifebar__mood" id="lifeMood"></span>
+      <span class="lifebar__time" id="lifeTime"></span>
+    </a>
+    <button class="whybtn" id="btnWhy" type="button" hidden title="为什么：她最近的随机决定和原因">为什么</button>
+  </div>
+  <div class="topbar__right">
+    <button class="iconbtn" id="btnSide" title="写作 / 在读" aria-label="写作 / 在读">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2 2 0 0 1 3 3L8 19z"/><path d="M14.5 6.5l3 3"/></svg>
+    </button>
+    <button class="iconbtn" id="btnCalendar" title="日历" aria-label="日历">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17"/><path d="M8 3.5v3M16 3.5v3"/></svg>
+    </button>
+    <button class="iconbtn" id="btnSearch" title="搜索历史记录" aria-label="搜索历史记录">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+    </button>
+    <button class="iconbtn" id="btnMemory" title="记忆库" aria-label="记忆库">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.2A2.2 2.2 0 0 1 6.2 17H20"/><path d="M6.2 2.5H20v19H6.2A2.2 2.2 0 0 1 4 19.2V4.7A2.2 2.2 0 0 1 6.2 2.5z"/></svg>
+    </button>
+    <button class="iconbtn" id="btnMoney" title="零花钱账本" aria-label="零花钱账本">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.2c0-1.2.9-2 2.1-2H18"/><path d="M4 8.2v9.6c0 1.2.9 2 2.1 2h12.6c.7 0 1.3-.6 1.3-1.3V9.5c0-.7-.6-1.3-1.3-1.3H4z"/><circle cx="16.2" cy="13.7" r="1.2"/></svg>
+    </button>
+    <button class="iconbtn" id="btnNotebook" title="她的小本子" aria-label="她的小本子">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5.5" y="3" width="13.5" height="18" rx="1.8"/><path d="M3.5 7h3M3.5 12h3M3.5 17h3"/><path d="M10 8h5.5M10 11.5h4"/></svg>
+    </button>
+    <button class="iconbtn" id="btnRoom" title="她的房间" aria-label="她的房间">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11.2 12 4l8.5 7.2"/><path d="M5.5 9.8V20h13V9.8"/><path d="M10 20v-5.2h4V20"/></svg>
+    </button>
+    <button class="iconbtn" id="btnSettings" title="设置" aria-label="设置">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.1"/><path d="M19.1 14.6a1.6 1.6 0 0 0 .32 1.77l.06.06a1.94 1.94 0 1 1-2.75 2.75l-.06-.06a1.6 1.6 0 0 0-1.77-.32 1.6 1.6 0 0 0-.97 1.47v.17a1.94 1.94 0 1 1-3.88 0v-.09a1.6 1.6 0 0 0-1.05-1.47 1.6 1.6 0 0 0-1.77.32l-.06.06a1.94 1.94 0 1 1-2.75-2.75l.06-.06a1.6 1.6 0 0 0 .32-1.77 1.6 1.6 0 0 0-1.47-.97H3.1a1.94 1.94 0 1 1 0-3.88h.09a1.6 1.6 0 0 0 1.47-1.05 1.6 1.6 0 0 0-.32-1.77l-.06-.06a1.94 1.94 0 1 1 2.75-2.75l.06.06a1.6 1.6 0 0 0 1.77.32h.08a1.6 1.6 0 0 0 .97-1.47V3.1a1.94 1.94 0 1 1 3.88 0v.09a1.6 1.6 0 0 0 .97 1.47 1.6 1.6 0 0 0 1.77-.32l.06-.06a1.94 1.94 0 1 1 2.75 2.75l-.06.06a1.6 1.6 0 0 0-.32 1.77v.08a1.6 1.6 0 0 0 1.47.97h.17a1.94 1.94 0 1 1 0 3.88h-.09a1.6 1.6 0 0 0-1.47.97z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="stream" id="stream"></main>
+
+<aside class="rail" id="rail" aria-hidden="true">
+  <div class="cal">
+    <div class="cal__head">
+      <button class="cal__nav" id="calPrev" type="button" title="往前一天">‹</button>
+      <button class="cal__where" id="calWhere" type="button" title="展开月历，点某一天跳过去">今天</button>
+      <button class="cal__nav" id="calNext" type="button" title="往后一天">›</button>
+    </div>
+    <div class="cal__month" id="calMonth" hidden></div>
+    <div class="cal__days" id="calDays"></div>
+  </div>
+</aside>
+<div class="rail-scrim" id="railScrim"></div>
+
+<!-- 聊天框右侧的卡片：她在读的书 / 她的写作文档 / 我的文字 -->
+<aside class="rrail" id="rrail" aria-hidden="true">
+  <section class="sidecard sidecard--book" id="cardReading" hidden></section>
+
+  <section class="sidecard" id="cardDocs">
+    <header class="sidecard__head">
+      <span class="sidecard__title">写作<em>她写的</em></span>
+      <button class="sidecard__add" id="docAdd" type="button" title="给她建一份空白文档">＋</button>
+    </header>
+    <form class="sidecard__form" id="docNewForm" hidden>
+      <input class="input input--tiny" id="docNewTitle" placeholder="新文档的标题…" maxlength="60" />
+      <button class="btn btn--mini" type="submit">建</button>
+    </form>
+    <div class="sidecard__hint" id="docsHint"></div>
+    <ul class="doclist" id="docList"></ul>
+  </section>
+
+  <section class="sidecard" id="cardMine">
+    <header class="sidecard__head">
+      <span class="sidecard__title">我的文字<em>她会模仿</em></span>
+      <button class="sidecard__add" id="mineAdd" type="button" title="新建一份我的文字">＋</button>
+      <label class="sidecard__add" for="mineFile" title="导入 .txt / .md 文件">⇪</label>
+      <input type="file" id="mineFile" accept=".txt,.md" multiple hidden />
+    </header>
+    <form class="sidecard__form" id="mineNewForm" hidden>
+      <input class="input input--tiny" id="mineNewTitle" placeholder="标题（之后在里面粘贴 / 写）…" maxlength="60" />
+      <button class="btn btn--mini" type="submit">建</button>
+    </form>
+    <ul class="doclist" id="mineList"></ul>
+  </section>
+
+  <section class="sidecard" id="cardLetters">
+    <header class="sidecard__head">
+      <span class="sidecard__title">信<em>她写给你的</em></span>
+    </header>
+    <ul class="doclist" id="letterList"></ul>
+  </section>
+</aside>
+<div class="rail-scrim rrail-scrim" id="rrailScrim"></div>
+
+<!-- 文档编辑器（网页里直接改） -->
+<div class="docview" id="docRoot" hidden>
+  <header class="docview__bar">
+    <button class="docview__btn" id="docBack" type="button">‹ 返回</button>
+    <input class="docview__title" id="docTitle" maxlength="60" spellcheck="false" aria-label="文档标题" />
+    <span class="docview__count" id="docCount"></span>
+    <span class="docview__state" id="docState"></span>
+    <button class="docview__btn docview__btn--save" id="docSave" type="button" title="保存（Ctrl+S）。保存之后她才会看到你的修改">保存</button>
+    <button class="docview__btn" id="docHistory" type="button" title="历史版本，可以撤销">历史</button>
+    <button class="docview__btn docview__btn--danger" id="docDelete" type="button" title="删除这份文档">删除</button>
+  </header>
+  <div class="docview__body">
+    <div class="docview__note" id="docNote"></div>
+    <textarea class="docview__text" id="docText" spellcheck="false" placeholder="在这里写……"></textarea>
+  </div>
+  <aside class="docview__hist" id="docHist" hidden>
+    <div class="docview__histhead"><span>历史版本</span><button type="button" id="docHistClose" aria-label="关闭">×</button></div>
+    <div class="docview__histlist" id="docHistList"></div>
+  </aside>
+</div>
+
+<div class="composer-wrap">
+  <div class="composer-line">
+  <button class="shelfbtn shelfbtn--power" id="btnShutdown" type="button" title="关闭服务：停掉后端进程并关掉这个页面" aria-label="关闭服务">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 3.5v8"/><path d="M6.8 6.8a7.5 7.5 0 1 0 10.4 0"/></svg>
+    <span>关闭</span>
+  </button>
+  <div class="composer">
+    <div class="quote" id="quoteBar" hidden>
+      <div class="quote__body">
+        <div class="quote__who" id="quoteWho"></div>
+        <div class="quote__text" id="quoteText"></div>
+      </div>
+      <button class="quote__close" id="quoteClose" title="取消引用" aria-label="取消引用">×</button>
+    </div>
+    <div class="composer__row">
+      <textarea id="input" rows="1" placeholder="说点什么…" autocomplete="off"></textarea>
+      <button class="send" id="send" disabled aria-label="发送">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19.5V5"/><path d="M5.5 11.5 12 5l6.5 6.5"/></svg>
+      </button>
+    </div>
+  </div>
+  <button class="shelfbtn" id="btnReader" type="button" title="书架 / 阅读器：Phal 在看的书都在这" aria-label="书架 / 阅读器">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.2 5 7.6 4.4 4 4.6v13c3.6-.2 6.2.4 8 1.9 1.8-1.5 4.4-2.1 8-1.9v-13c-3.6-.2-6.2.4-8 1.9z"/><path d="M12 6.5v13"/></svg>
+    <span>书架</span>
+  </button>
+  <button class="shelfbtn" id="btnQQ" type="button" title="QQ：让她去 QQ 里（主人私聊 / 白名单群）" aria-label="QQ">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h8A2.5 2.5 0 0 1 17 6.5v5a2.5 2.5 0 0 1-2.5 2.5H10l-3.5 3v-3A2.5 2.5 0 0 1 4 11.5z"/><path d="M17 9h.5A2.5 2.5 0 0 1 20 11.5v4a2.5 2.5 0 0 1-2.5 2.5V21l-3-2.5H12"/></svg>
+    <i class="qqdot is-off"></i>
+    <span>QQ</span>
+  </button>
+  </div>
+  <div class="composer__hint" id="hint"></div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="drawer" aria-hidden="true">
+  <div class="drawer__head">
+    <div class="tabs">
+      <button class="tab is-active" data-tab="memory">记忆与历史</button>
+      <button class="tab" data-tab="drafts">草稿本</button>
+    </div>
+    <button class="iconbtn" id="drawerClose" title="关闭" aria-label="关闭">×</button>
+  </div>
+
+  <div class="drawer__body">
+
+    <!-- ─────────── 记忆与历史 ─────────── -->
+    <section class="pane is-active" data-pane="memory">
+      <div class="stats" id="statsLine">—</div>
+
+      <div class="card">
+        <div class="card__title">搜索全部历史记录<em>（archive 表）</em></div>
+        <div class="field field--inline">
+          <input class="input" id="searchInput" type="search" placeholder="输入关键词，比如某个名字、某件事…" />
+          <button class="btn btn--ghost" id="btnDoSearch" type="button">搜索</button>
+        </div>
+        <div class="hits" id="searchHits"><div class="empty-hint">输入关键词，翻一翻更早的聊天记录。</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card__title">长期记忆<em>（三类具体条目：关于我 / Phal 说过的 / 我们之间）</em></div>
+        <div class="memlist" id="memoryList"><div class="empty-hint">还没有记忆条目。</div></div>
+        <div class="field field--inline">
+          <select class="input task__pri" id="memoryCategory" title="记忆类别" style="flex:0 0 auto;width:auto">
+            <option value="about_user">关于我</option>
+            <option value="phal_fact">Phal 说过的</option>
+            <option value="shared">我们之间</option>
+          </select>
+          <input class="input" id="memoryInput" type="text" placeholder="手动添加一条记忆…" />
+          <button class="btn btn--ghost" id="btnAddMemory" type="button">添加</button>
+        </div>
+        <button class="btn btn--ghost btn--wide" id="btnSummarize" type="button">让模型整理当前会话</button>
+      </div>
+
+      <div class="card">
+        <div class="card__title">说话风格<em>（读过往全部聊天学到的，可以直接改）</em></div>
+        <textarea class="textarea" id="styleNotes" spellcheck="false" placeholder="聊得够多之后，它会自己总结出怎么说话，写在这里。你也可以手动写、手动改。"></textarea>
+        <div class="hintline" id="styleEdits"></div>
+        <label class="switch">
+          <input type="checkbox" id="styleSwitch" />
+          <span class="switch__box"></span>
+          <span class="switch__text">每多聊一些，自动从全部聊天里重新学一次</span>
+        </label>
+        <button class="btn btn--ghost btn--wide" id="btnLearnStyle" type="button">让它重新读一遍过往聊天</button>
+      </div>
+
+      <div class="card">
+        <div class="card__title">会话</div>
+        <div class="hintline">开新对话只会清空当前聊天窗口，历史归档一条都不会丢，人设也不会变。</div>
+        <button class="btn btn--ghost btn--wide" id="btnNewSession" type="button">开一段新对话</button>
+      </div>
+
+      <div class="card">
+        <div class="card__title">删除记录<em>（网页上的和本地库里的一起删）</em></div>
+        <div class="hintline">
+          删除是真删：聊天窗口（messages 表）和本地历史归档（archive 表）会同时清掉，删完无法恢复。
+          单条消息也可以删——点聊天里任意一条消息，选「删除」。
+        </div>
+        <button class="btn btn--ghost btn--wide" id="btnClearConversation" type="button">删除当前这段对话</button>
+        <button class="btn btn--ghost btn--wide" id="btnClearMemories" type="button">清空长期记忆</button>
+        <button class="btn btn--danger btn--wide" id="btnClearAll" type="button">清空全部聊天记录</button>
+      </div>
+    </section>
+
+
+    <!-- ─────────── Phal 的草稿本 ─────────── -->
+    <section class="pane" data-pane="drafts">
+      <div class="card">
+        <div class="card__title">她的生活<em>（喝茶 / 看书 / 神游 / 试图创作）</em></div>
+        <label class="switch">
+          <input type="checkbox" id="lifeSwitch" />
+          <span class="switch__box"></span>
+          <span class="switch__text">让她过自己的生活<em>（页面开着时才流动；聊天时她会暂停）</em></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" id="notifySwitch" />
+          <span class="switch__box"></span>
+          <span class="switch__text">她主动发消息时，在系统通知栏弹出提醒<em>（多段话只算一次）</em></span>
+        </label>
+        <div class="hintline" id="notifyHint"></div>
+        <div class="hintline">她会真的看书架上的书，在书页上写注释，偶尔主动来找你说话（每小时最多几条）；也会试着写点小东西，写成了放进下面的草稿本。</div>
+      </div>
+      <div class="card">
+        <div class="card__title">草稿本<em>（她写的，也有放弃的）</em></div>
+        <div class="draftlist" id="draftList"><div class="empty-hint">还没有草稿。</div></div>
+      </div>
+    </section>
+
+  </div>
+</aside>
+
+<div class="modal-scrim" id="modalScrim" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal__title" id="modalTitle"></div>
+    <div class="modal__text" id="modalText"></div>
+    <div class="modal__ops">
+      <button class="btn btn--ghost" id="modalCancel" type="button">取消</button>
+      <button class="btn btn--danger" id="modalOk" type="button">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div id="readerRoot" class="theme-paper" hidden>
+<header class="rbar">
+  <button class="rbar__back" id="rdBack" type="button" title="回到聊天">‹ 聊天</button>
+  <button class="rbar__btn" id="btnShelf" type="button">书架</button>
+  <span class="rbar__title" id="rTitle"></span>
+  <div class="rbar__tools" id="rTools" hidden>
+    <button class="rbar__btn" id="btnToc" type="button" title="目录">目录</button>
+    <button class="rbar__btn" id="btnMarks" type="button" title="书签列表">书签</button>
+    <button class="rbar__btn" id="btnSearch" type="button" title="搜索书里的文字（Ctrl+F）">搜索</button>
+    <button class="rbar__btn" id="btnMarkHere" type="button" title="给这一页加 / 取消书签">☆</button>
+    <button class="rbar__btn" id="btnFontDown" type="button" title="字号小一点">A−</button>
+    <button class="rbar__btn" id="btnFontUp" type="button" title="字号大一点">A+</button>
+    <button class="rbar__btn is-on" id="btnNotes" type="button" title="显示 / 隐藏 Phal 的注释">注释</button>
+    <button class="rbar__btn" id="btnPen" type="button" title="画笔：在书页上随手画（画完的笔迹会留在这一页）">画笔</button>
+    <button class="rbar__btn" id="btnNight" type="button" title="夜间模式">夜</button>
+  </div>
+</header>
+
+<!-- 书架 -->
+<main class="shelf" id="shelfView">
+  <div class="shelf__head">
+    <h1>书架</h1>
+    <label class="upload" id="uploadLabel">
+      <input type="file" id="fileInput" accept=".epub,.txt,.text,.pdf" multiple hidden />
+      <span>＋ 上传 epub / txt / pdf（扫描版 pdf 一页一图）</span>
+    </label>
+  </div>
+  <div class="shelf__hint" id="shelfHint">书只存在你自己的电脑上（data/books），不会上传到任何地方。</div>
+  <div class="shelf__grid" id="shelfGrid"></div>
+</main>
+
+<!-- 阅读 -->
+<main class="read" id="readView" hidden>
+  <div class="book" id="book">
+    <div class="spread" id="spread">
+      <div class="flow" id="flow"></div>
+      <img class="pageimg" id="pageImg" alt="" hidden draggable="false" />
+      <div class="notes-layer" id="notesLayer" aria-label="Phal 的批注"></div>
+      <svg class="ink-layer" id="inkLayer" aria-label="我的笔迹"></svg>
+      <div class="turn" id="turn" hidden></div>
+    </div>
+  </div>
+  <div class="penbar" id="penBar" hidden>
+    <button type="button" class="pen__c is-on" data-c="#2f2a24" style="--c:#2f2a24" title="墨色"></button>
+    <button type="button" class="pen__c" data-c="#b0412e" style="--c:#b0412e" title="红"></button>
+    <button type="button" class="pen__c" data-c="#3a6ea5" style="--c:#3a6ea5" title="蓝"></button>
+    <button type="button" class="pen__c pen__c--hl" data-c="#e0b23a" data-hl="1" style="--c:#e0b23a" title="荧光笔"></button>
+    <span class="pen__sep"></span>
+    <button type="button" class="pen__w is-on" data-w="2.4" title="细"><i style="height:2px"></i></button>
+    <button type="button" class="pen__w" data-w="5" title="粗"><i style="height:5px"></i></button>
+    <span class="pen__sep"></span>
+    <button type="button" class="pen__t" id="penUndo" title="撤销上一笔">撤销</button>
+    <button type="button" class="pen__t" id="penClear" title="清掉这一页的笔迹">清空</button>
+  </div>
+  <footer class="rfoot">
+    <span id="pageInfo"></span>
+    <span id="phalInfo"></span>
+    <span class="searchinfo" id="searchInfo" hidden></span>
+  </footer>
+  <button class="tapzone tapzone--l" id="tapL" type="button" aria-label="上一页"></button>
+  <button class="tapzone tapzone--r" id="tapR" type="button" aria-label="下一页"></button>
+</main>
+
+<aside class="rdrawer" id="rdDrawer" hidden>
+  <div class="rdrawer__head"><span id="rdDrawerTitle"></span><button type="button" id="rdDrawerClose" aria-label="关闭">×</button></div>
+  <div class="rdrawer__body" id="rdDrawerBody"></div>
+</aside>
+<div class="rscrim" id="rdScrim" hidden></div>
+
+<button class="sharebtn" id="shareBtn" type="button" hidden>发给 Phal</button>
+
+<div class="annpop" id="annPop" hidden>
+  <div class="annpop__snippet" id="annSnippet"></div>
+  <div class="annpop__note" id="annNote"></div>
+  <div class="annpop__ops">
+    <button type="button" id="annChat">跟她聊聊这条</button>
+    <button type="button" id="annClose">关闭</button>
+  </div>
+</div>
+
+<div class="rtoast" id="rtoast"></div>
+
+</div>
+
+<!-- 统一设置页 -->
+<div class="setpage" id="setRoot" hidden>
+  <header class="setpage__bar">
+    <button class="setpage__back" id="setBack" type="button">‹ 返回</button>
+    <span class="setpage__title">设置</span>
+    <span class="setpage__state" id="setState"></span>
+  </header>
+  <div class="setpage__main">
+    <nav class="setnav" id="setNav" aria-label="设置分区"></nav>
+    <div class="setpage__body" id="setBody"></div>
+  </div>
+</div>
+
+<!-- 她的房间 -->
+<div class="roompage" id="roomRoot" hidden>
+  <header class="setpage__bar">
+    <button class="setpage__back" id="roomBack" type="button">‹ 返回</button>
+    <span class="setpage__title">她的房间</span>
+    <span class="roompage__count" id="roomCount"></span>
+    <div class="roompage__tabs" role="tablist">
+      <button class="roompage__tab is-on" type="button" data-view="plan" role="tab">平面图</button>
+      <button class="roompage__tab" type="button" data-view="cat" role="tab" title="不分区域，按分类看全部东西">按分类查看</button>
+    </div>
+    <div class="roompage__style" role="group" aria-label="房间风格（试用）" title="三套风格先试试看，选定后告诉我，我把默认值改掉并去掉这个切换">
+      <span>风格</span><button type="button" data-style="A">A</button><button type="button" data-style="B">B</button>
+    </div>
+    <button class="btn btn--ghost btn--mini" id="roomAdd" type="button" title="手动往房间里放一件东西">＋ 添加物品</button>
+    <span class="setpage__state" id="roomState"></span>
+  </header>
+  <div class="roompage__main" id="roomMain"></div>
+  <div class="roompop" id="roomPop" hidden>
+    <div class="roompop__sheet" role="dialog" aria-modal="true" aria-labelledby="roomPopTitle">
+      <div class="roompop__head"><span id="roomPopTitle"></span><button type="button" id="roomPopClose" aria-label="关闭">×</button></div>
+      <div class="roompop__body" id="roomPopBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 零花钱账本 -->
+<div class="roompage moneypage" id="moneyRoot" hidden>
+  <header class="setpage__bar">
+    <button class="setpage__back" id="moneyBack" type="button">‹ 返回</button>
+    <span class="setpage__title">零花钱账本</span>
+    <div class="moneypage__month">
+      <button type="button" id="moneyPrev" aria-label="上个月">‹</button>
+      <span id="moneyMonth"></span>
+      <button type="button" id="moneyNext" aria-label="下个月">›</button>
+    </div>
+    <button class="btn btn--ghost btn--mini" id="moneyAdjust" type="button" title="额外给她一笔零花钱，或者扣掉一笔">＋ 调整余额</button>
+    <span class="setpage__state" id="moneyState"></span>
+  </header>
+  <div class="roompage__main" id="moneyMain"></div>
+  <div class="roompop" id="moneyPop" hidden>
+    <div class="roompop__sheet" role="dialog" aria-modal="true" aria-labelledby="moneyPopTitle">
+      <div class="roompop__head"><span id="moneyPopTitle">调整余额</span><button type="button" id="moneyPopClose" aria-label="关闭">×</button></div>
+      <div class="roompop__body" id="moneyPopBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 她的小本子（app/notebook.py） -->
+<div class="roompage nbpage" id="notebookRoot" hidden>
+  <header class="setpage__bar">
+    <button class="setpage__back" id="nbBack" type="button">‹ 返回</button>
+    <span class="setpage__title">她的小本子</span>
+    <input class="input nbpage__search" id="nbSearch" type="search" placeholder="搜索标题、正文、关键词" />
+    <button class="btn btn--mini" id="nbNew" type="button" title="自己写一条：你写的条目自动锁定">＋ 新建一条</button>
+    <span class="setpage__state" id="nbState"></span>
+  </header>
+  <div class="roompage__main nbpage__main" id="nbMain"></div>
+  <div class="roompop" id="nbPop" hidden>
+    <div class="roompop__sheet" role="dialog" aria-modal="true" aria-labelledby="nbPopTitle">
+      <div class="roompop__head"><span id="nbPopTitle"></span><button type="button" id="nbPopClose" aria-label="关闭">×</button></div>
+      <div class="roompop__body" id="nbPopBody"></div>
+    </div>
+  </div>
+</div>
+
+<div class="setpage qqpage" id="qqRoot" hidden>
+  <header class="setpage__bar">
+    <button class="setpage__back" id="qqBack" type="button">‹ 返回</button>
+    <span class="setpage__title">QQ</span>
+    <span class="setpage__state" id="qqState"></span>
+  </header>
+  <div class="setpage__main">
+    <nav class="setnav" id="qqNav" aria-label="QQ 分区"></nav>
+    <div class="setpage__body" id="qqBody"></div>
+  </div>
+</div>
+
+<script src="/static/app.js?v=23"></script>
+<script src="/static/reader.js?v=12"></script>
+<script src="/static/settings.js?v=17"></script>
+<script src="/static/iso.js?v=4"></script>
+<script src="/static/room3d-persp.js?v=2"></script>
+<script src="/static/room3d-scene.js?v=5"></script>
+<script src="/static/room3d-extras.js?v=8"></script>
+<script src="/static/room3d-weather.js?v=4"></script>
+<script src="/static/room3d.js?v=10"></script>
+<script src="/static/roomchar.js?v=10"></script>
+<script src="/static/roomweather.js?v=3"></script>
+<script src="/static/room.js?v=20"></script>
+<script src="/static/posetune.js?v=1"></script>
+<script src="/static/money.js?v=3"></script>
+<script src="/static/notebook.js?v=3"></script>
+<script src="/static/qq.js?v=2"></script>
+</body>
+</html>
