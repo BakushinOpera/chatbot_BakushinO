@@ -1,6 +1,7 @@
 # Phal
 
 一个跑在自己电脑上的 AI 陪伴聊天应用：她有自己的生活（作息、心情、吃饭、零花钱、读书写作、房间），会记得你们聊过的事，会把聊天里说过的打算真的去做。
+可以随意修改。
 
 ## 组成
 
@@ -13,7 +14,7 @@
 
 ## 用免安装版（推荐）
 
-1. 从这个仓库的 Releases 下载 `AI聊天-portable-<日期>.zip`（exe 太大，不放在代码里）。
+1. 从这个仓库的 Releases 下载 `AI聊天-portable-<日期>.zip`。
 2. 解压到任意文件夹（路径里最好没有特殊符号），双击 `AI 聊天.exe`。不用装 Python。
 3. 第一次打开没配 key 是离线演示模式，能发消息但她不会真的回复。配 key 见下面。
 
@@ -65,10 +66,10 @@ npx electron-builder --win nsis
 * 角色配置：`<数据目录>\characters\<角色id>\character.json`，只写想改的项；完整的项和 Phal 的默认值见 `pj1/app/character.py`。
 * 人设：同一个目录里的 `persona.md`（第一次启动时当默认人设）。
 * 加状态、加事件类型：同一个目录里的 `states.json`、`events.json`。
-* 可选内容：`features` 里的 `occult`（神秘学）、`fictional_world`（虚构世界：不提现实地名）默认都关着；`user_pronoun` 是提示词里对你的称呼（默认「他」）。
+* 可选内容：`fictional_world`（虚构世界：不提现实地名）默认都关着；`user_pronoun` 是提示词里对你的称呼（默认「他」）。
 * 用哪个角色：环境变量 `CHAT_CHARACTER`（默认 `phal`）。
 
-## QQ 接入（可选）
+## QQ 接入（可选，没实测过）
 
 主界面「QQ」按钮里配置，通过 NapCat（OneBot v11）连接。**有封号风险，务必用小号。** 只处理你指定的主人私聊和白名单群，QQ 里的内容不会进她的本地记忆。
 
